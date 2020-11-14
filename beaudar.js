@@ -515,8 +515,8 @@ parcelRequire = function(e) {
     })
   }
   function M(n) {
-    var e = "\"" + n + "\" type:issue in:title repo:" + g + "/" + h;
-    return f(j("search/issues?q=" + encodeURIComponent(e) + "&sort=created&order=asc")).then(function(n) {
+    var e = "\"" + n +  "/" + h;
+    return f(j("search/issues?q=" + encodeURIComponent(e) + "&repo="+ encodeURIComponent(g) +"&author="+ g.split("/")[0] +"&page=1&per_page=1&order=asc")).then(function(n) {
       if (void 0 === n || !n.ok)
         throw new Error("\u641C\u7D22 Issues \u5931\u8D25\u3002");
       return n.json()
