@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <title>Gitee issues 评论插件</title>
+  <meta name="description" content="使用 GitHub issue 的轻量级评论插件。">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="baidu-site-verification" content="VJTgEhbeUg" />
+  <link rel="preconnect" href="https://gitee.com/api/v5/">
+  <link rel="preconnect" href="https://avatars3.githubusercontent.com">
+  <link id="theme-stylesheet" rel="stylesheet" href="https://gissues.gitee.io/stylesheets/themes/github-light/index.css">
+  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="./icons/favicon-16x16.png">
+  <link rel="manifest" href="./icons/manifest.webmanifest">
+  <link rel="mask-icon" href="./icons/safari-pinned-tab.svg" color="#4c2889">
+  <link rel="shortcut icon" href="./icons/favicon.ico">
+  <link rel="canonical" href="http://gissues.gitee.io">
+  <meta name="apple-mobile-web-app-title" content="beaudar">
+  <meta name="application-name" content="beaudar">
+  <meta name="msapplication-config" content="icons/browserconfig.xml">
+  <meta name="theme-color" content="#ffffff">
+  <meta property="og:title" content="beaudar">
+
+  <!-- if condition="NODE_ENV === 'production'" -->
+  <script>
+    if (Array.from === undefined) {
+      Array.from = function (x) {
+        return Array.prototype.slice.call(x);
+      }
+    }
+    if (!window.Promise || !window.fetch) {
+      document.write(
+        '<script src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.5.0/bluebird.min.js" integrity="sha256-/l7dZnd9iW5Iw9P2Qn/0ghByeFDKnIcPd4DTptDaK20=" crossorigin="anonymous"><\/script>',
+        '<script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/2.0.3/fetch.min.js" integrity="sha256-aB35laj7IZhLTx58xw/Gm1EKOoJJKZt6RY+bH1ReHxs=" crossorigin="anonymous"><\/script>',
+        '<script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js" integrity="sha384-hmjwm4yehDT6Ezcxh87+SDcTlQYHxrisDyYCrBHPc0VFPfUqGl8jGF7I7gprJpIr" crossorigin="anonymous"><\/script>',
+        '<script src="https://cdn.jsdelivr.net/npm/custom-event-polyfill@0.3.0/custom-event-polyfill.min.js" integrity="sha384-LA1yvfV5pKonJnGIRvMu236XXaEJvI11iV52RIkwsE4QAWpgge1OcxfBHk/0t3UP" crossorigin="anonymous"><\/script>'
+      );
+    }
+
+  </script>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-154705931-2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'UA-154705931-2');
+
+  </script>
+</head>
+
+<body>
+  <canvas id="confetti"> </canvas>
+  <main class="timeline">
+    <article class="timeline-comment">
+      <a class="avatar" href="https://github.com/beaudar" target="_blank">
+        <img alt="@beaudar" height="44" width="44" src="./icons/Beaudar-240.png">
+      </a>
+      <div class="comment">
+        <header class="comment-header">
+          <span class="comment-meta">
+            <strong class="comment-author">Beaudar</strong>
+          </span>
+        </header>
+        <article class="markdown-body" md>
+          <include src="./README.MD"></include>
+          <h2 id="configuration">🥳 配置并获取代码 🥂🎉</h2>
+          <div class="clear-both" md>
+            <include src="./SITES.MD"></include>
+          </div>
+          <h2>赶紧来试试吧！👇👇👇</h2>
+        </article>
+      </div>
+    </article>
+  </main>
+
+  <script src="./index.ts"></script>
+  <script src="./confetti.js"></script>
+
+  <section id="beaudar">
+    <if condition="NODE_ENV === 'production'">
+      <script src="https://gissues.gitee.io/client.js" repo="beaudar/beaudar" issue-term="homepage"
+        crossorigin="anonymous" theme="github-light" async>
+      </script>
+    </if>
+    <else>
+      <script src="http://gissues.gitee.io/client.js" repo="zsdycs/beaudar-demo" issue-term="pathname" label="💬 评论"
+        crossorigin="anonymous" theme="github-light" async>
+      </script>
+    </else>
+  </section>
+  <div class="copyright">
+    © 2020 <a target="_blank" href="https://gissues.gitee.io">Gissues</a>
+  </div>
+</body>
+
+</html>
