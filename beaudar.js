@@ -429,7 +429,7 @@ parcelRequire = function(e) {
    , H = "https://gitee.com/api/v5/"
    , I = "application/json"
    , na = "text/html"
-   , m = "application/vnd.github.squirrel-girl-preview"
+   , m = "application/squirrel-girl-preview"
    , q = 25;
   a.PAGE_SIZE = q;
   var g, h, t, v = ["+1", "-1", "laugh", "hooray", "confused", "heart", "rocket", "eyes"];
@@ -934,7 +934,7 @@ parcelRequire = function(e) {
       "A" === t.nodeName && (t.href = e.getAttribute("data-canonical-src"))
     }),
     Array.from(e.querySelectorAll("a.commit-tease-sha")).forEach(function(e) {
-      return e.href = "https://github.com" + e.pathname
+      return e.href = "https://gitee.com" + e.pathname
     })
   }
   var ya = function() {
@@ -1233,7 +1233,7 @@ parcelRequire = function(e) {
       ,
       this.element = document.createElement("article"),
       this.element.classList.add("timeline-comment"),
-      this.element.innerHTML = "\n <a class=\"avatar\" target=\"_blank\">\n  <img height=\"44\" width=\"44\">\n </a>\n <form class=\"comment\" accept-charset=\"UTF-8\" action=\"javascript:\">\n  <header class=\"new-comment-header tabnav\">\n <nav class=\"tabnav-tabs\" role=\"tablist\">\n <button type=\"button\" class=\"tabnav-tab tab-write\"\n role=\"tab\" aria-selected=\"true\">\n \u7F16\u8F91\n </button>\n <button type=\"button\" class=\"tabnav-tab tab-preview\"\n role=\"tab\">\n \u9884\u89C8\n </button>\n </nav>\n  </header>\n  <div class=\"comment-body\">\n <textarea class=\"form-control\" placeholder=\"Leave a comment\" aria-label=\"comment\"></textarea>\n <div class=\"markdown-body\" style=\"display: none\">\n " + D + "\n </div>\n  </div>\n  <footer class=\"new-comment-footer\">\n <a class=\"text-link markdown-info\" target=\"_blank\"\n  href=\"https://guides.github.com/features/mastering-markdown/\">\n <svg class=\"octicon v-align-bottom\" viewBox=\"0 0 16 16\" version=\"1.1\"\n width=\"16\" height=\"16\" aria-hidden=\"true\">\n <path fill-rule=\"evenodd\" d=\"M14.85 3H1.15C.52 3 0 3.52 0 4.15v7.69C0 12.48.52 13 1.15\n 13h13.69c.64 0 1.15-.52 1.15-1.15v-7.7C16 3.52 15.48 3 14.85 3zM9 11H7V8L5.5 9.92 4\n 8v3H2V5h2l1.5 2L7 5h2v6zm2.99.5L9.5 8H11V5h2v3h1.5l-2.51 3.5z\">\n </path>\n </svg>\n \u652F\u6301 Markdown \u7F16\u8F91\n </a>\n <button class=\"btn btn-primary\" type=\"submit\">\u53D1\u8868\u8BC4\u8BBA</button>\n <a class=\"btn btn-primary\" href=\"" + r(b.url) + "\" target=\"_top\">\u767B\u5F55</a>\n  </footer>\n </form>",
+      this.element.innerHTML = "\n <a class=\"avatar\" target=\"_blank\">\n  <img height=\"44\" width=\"44\">\n </a>\n <form class=\"comment\" accept-charset=\"UTF-8\" action=\"javascript:\">\n  <header class=\"new-comment-header tabnav\">\n <nav class=\"tabnav-tabs\" role=\"tablist\">\n <button type=\"button\" class=\"tabnav-tab tab-write\"\n role=\"tab\" aria-selected=\"true\">\n \u7F16\u8F91\n </button>\n <button type=\"button\" class=\"tabnav-tab tab-preview\"\n role=\"tab\">\n \u9884\u89C8\n </button>\n </nav>\n  </header>\n  <div class=\"comment-body\">\n <textarea class=\"form-control\" placeholder=\"Leave a comment\" aria-label=\"comment\"></textarea>\n <div class=\"markdown-body\" style=\"display: none\">\n " + D + "\n </div>\n  </div>\n  <footer class=\"new-comment-footer\">\n <a class=\"text-link markdown-info\" target=\"_blank\"\n  href=\"https://gissues.gitee.io/\">\n <svg class=\"octicon v-align-bottom\" viewBox=\"0 0 16 16\" version=\"1.1\"\n width=\"16\" height=\"16\" aria-hidden=\"true\">\n <path fill-rule=\"evenodd\" d=\"M14.85 3H1.15C.52 3 0 3.52 0 4.15v7.69C0 12.48.52 13 1.15\n 13h13.69c.64 0 1.15-.52 1.15-1.15v-7.7C16 3.52 15.48 3 14.85 3zM9 11H7V8L5.5 9.92 4\n 8v3H2V5h2l1.5 2L7 5h2v6zm2.99.5L9.5 8H11V5h2v3h1.5l-2.51 3.5z\">\n </path>\n </svg>\n \u652F\u6301 Markdown \u7F16\u8F91\n </a>\n <button class=\"btn btn-primary\" type=\"submit\">\u53D1\u8868\u8BC4\u8BBA</button>\n <a class=\"btn btn-primary\" href=\"" + r(b.url) + "\" target=\"_top\">\u767B\u5F55</a>\n  </footer>\n </form>",
       this.avatarAnchor = this.element.firstElementChild,
       this.avatar = this.avatarAnchor.firstElementChild,
       this.form = this.avatarAnchor.nextElementSibling,
@@ -1599,8 +1599,8 @@ parcelRequire = function(e) {
           [3, 6];
         case 5:
           throw n = s.sent(),
-          new x().createMsgElement("api.github.com \u8BF7\u6C42\u5931\u8D25", "<p>\u53EF\u70B9\u51FB\u201C\u5237\u65B0\u201D\uFF0C\u5C1D\u8BD5\u89E3\u51B3\u6B64\u95EE\u9898\u3002</p>", !0),
-          new Error("api.github.com \u8BF7\u6C42\u5931\u8D25\u3002" + n);
+          new x().createMsgElement("gitee.com/api/v5/ \u8BF7\u6C42\u5931\u8D25", "<p>\u53EF\u70B9\u51FB\u201C\u5237\u65B0\u201D\uFF0C\u5C1D\u8BD5\u89E3\u51B3\u6B64\u95EE\u9898\u3002</p>", !0),
+          new Error("gitee.com/api/v5/ \u8BF7\u6C42\u5931\u8D25\u3002" + n);
         case 6:
           return o = new ya(r,t),
           document.body.appendChild(o.element),
