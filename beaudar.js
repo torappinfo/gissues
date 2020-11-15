@@ -113,7 +113,7 @@ parcelRequire = function(e) {
   }
   var x = function() {
     function e() {
-      this.beaudarArticle = "\n <article class=\"timeline-comment\">\n <a class=\"avatar\" href=\"https://gissues.gitee.io\" target=\"_blank\">\n <img height=\"44\" width=\"44\" src=\"logo.png\">\n </a>\n <div class=\"comment\">\n <header class=\"comment-header\">\n  <span class=\"comment-meta\">\n <strong class=\"comment-author\">Beaudar</strong> \u7CFB\u7EDF\u6D88\u606F\n  </span>\n </header>\n <article id=\"beaudarMsg\" class=\"markdown-body\">\n </article>\n </div>\n </article>\n",
+      this.beaudarArticle = "\n <article class=\"timeline-comment\">\n <a class=\"avatar\" href=\"https://gissues.gitee.io\" target=\"_blank\">\n <img height=\"44\" width=\"44\" src=\"logo.png\">\n </a>\n <div class=\"comment\">\n <header class=\"comment-header\">\n  <span class=\"comment-meta\">\n <strong class=\"comment-author\">Gissues</strong> \u7CFB\u7EDF\u6D88\u606F\n  </span>\n </header>\n <article id=\"beaudarMsg\" class=\"markdown-body\">\n </article>\n </div>\n </article>\n",
       null === document.querySelector(".timeline") ? (this.isTimelineNull = !0,
       this.element = document.createElement("main"),
       this.element.classList.add("timeline"),
