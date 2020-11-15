@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Hackintosh on 有限可能</title>
+    <link>/tags/hackintosh/</link>
+    <description>Recent content in Hackintosh on 有限可能</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <copyright>©2020 Huelse</copyright>
+    <lastBuildDate>Sun, 26 Apr 2020 00:29:55 +0800</lastBuildDate>
+    
+        <atom:link href="/tags/hackintosh/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Hackintosh黑苹果笔记</title>
+      <link>/posts/hackintosh/</link>
+      <pubDate>Sun, 26 Apr 2020 00:29:55 +0800</pubDate>
+      
+      <guid>/posts/hackintosh/</guid>
+      <description>&lt;p&gt;疫情期间闲在家中，我将老主机i5-4590+技嘉B85M-D2V+GTX750Ti台式利用起来安装黑苹果，简单整理并记录下安装过程和要点。基于硬件与驱动的兼容考虑，选择安装MacOS 10.13.6，现在的最新版本已经到10.15.4了。&lt;/p&gt;</description>
+      
+    </item>
+    
+  </channel>
+</rss>

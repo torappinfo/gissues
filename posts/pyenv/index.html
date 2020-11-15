@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh"><meta charset="utf-8"><meta name="generator" content="Hugo 0.78.1" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>pyenv使用笔记&nbsp;&ndash;&nbsp;有限可能</title><link rel="stylesheet" href="/css/core.min.a256f72702f9a9e4e3a4d222d5b6c02d923d90eb8e2a31fed8cff6370dc60557ef250dc912c2301678f71c15c7abce00.css" integrity="sha384-olb3JwL5qeTjpNIi1bbALZI9kOuOKjH&#43;2M/2Nw3GBVfvJQ3JEsIwFnj3HBXHq84A"><body>
+    <div class="base-body"><section id="header" class="site header">
+    <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">有限可能</span></a></span>
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/categories/">分类</a><a class="nav item" href="/tags/">标签</a><a class="nav item" href="/chat/">闲谈</a><a class="nav item" href="/future/">展望</a><a class="nav item" href="/about/">关于</a><a class="nav item" href="https://github.com/Huelse"target="_blank">github</a></nav></div></span></div><div class="site slogan"><span class="title">limited</span></div></section><div id="content"><div class="article-container"><section class="article header">
+    <h1 class="article title">pyenv使用笔记</h1><p class="article date">2020-03-08</p></section><article class="article markdown-body"><p>方便且高效的Python多版本管理器——pyenv使用笔记，安装、使用和离线安装方法</p>
+<h3 id="简介">简介</h3>
+<p>pyenv 可以帮助你在开发或者生产环境里安装和管理多个 Python 版本。这对于 Python 开发者而言非常有用。</p>
+<h3 id="安装">安装</h3>
+<p>以Ubuntu18.04为例，首先安装一些必要的工具和支持库：</p>
+<p><code>sudo apt-get install git build-essential libreadline-dev libsqlite3-dev libbz2-dev libssl-dev zlib1g-dev</code></p>
+<p>然后获得 pyenv 的最新版本：</p>
+<p><code>git clone https://github.com/pyenv/pyenv.git ~/.pyenv</code></p>
+<p>在 <code>.bashrc</code> 中添加三行指令，让系统可以找到 pyenv 安装的 Python：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">echo</span> <span class="s1">&#39;export PYENV_ROOT=&#34;$HOME/.pyenv&#34;&#39;</span> &gt;&gt; ~/.bashrc
+<span class="nb">echo</span> <span class="s1">&#39;export PATH=&#34;$PYENV_ROOT/bin:$PATH&#34;&#39;</span> &gt;&gt; ~/.bashrc
+<span class="nb">echo</span> -e <span class="s1">&#39;if command -v pyenv 1&gt;/dev/null 2&gt;&amp;1; then\n  eval &#34;$(pyenv init -)&#34;\nfi&#39;</span> &gt;&gt; ~/.bash_profile
+</code></pre></div><p>.bashrc在用户目录下<code>/home/&lt;username&gt;/.bashrc</code>，使用nano或者vim来编辑即可</p>
+<p>重启shell以使新的命令生效</p>
+<p><code>exec &quot;$SHELL&quot;</code></p>
+<h3 id="使用">使用</h3>
+<p>现在就可以用 pyenv 安装你需要的任何 Python 版本了，比如 2.7.14：</p>
+<p><code>pyenv install 2.7.14</code></p>
+<p>如果提示找不到pyenv这个命令，请检查下 .bashrc 里的修改是否已正确保存，重新连接shell后再使用</p>
+<p>查看目前系统里所有的 Python 版本：</p>
+<p><code>pyenv versions</code></p>
+<p>把某个版本设置为全局使用：</p>
+<p><code>pyenv global 2.7.14</code></p>
+<p>或是只对当前所在目录生效：</p>
+<p><code>pyenv local 2.7.14</code></p>
+<p>如果是设置为只对当前目录有效，那么在当前目录下会产生一个名为 .python-version 的文件，其中的内容是版本号。pyenv 就是根据这个文件的内容来确定当前目录应该使用哪个版本的 Python</p>
+<p>更多</p>
+<p>有时候我们会在install的时候出现网络问题，毕竟pyenv下载的是python官方源码包，其服务器在国外，国内的情况相比大家也都了解，这里简单说下解决方法</p>
+<p>第一种就是代理安装，可以通过设置系统环境变量<code>http_proxy</code>和<code>https_proxy</code>来完成下载</p>
+<p>第二种是本地安装，事先将标准的Python源码包<code>.tar.xz</code>放到<code>~/.pyenv/cache</code>目录下，然后用pyenv按其版本号安装就可以了</p>
+<p>内容到这里就结束了，关于 pyenv 的完整文档你可以在这里看到：<a href="https://github.com/pyenv/pyenv"target="_blank">github.com/pyenv/pyenv</a></p></article><section class="article labels"><a class="category" href=/categories/%E7%AC%94%E8%AE%B0/>笔记</a><a class="tag" href=/tags/%E7%BB%8F%E9%AA%8C/>经验</a><a class="tag" href=/tags/python/>Python</a></section></div>
+<div class="post-comment">
+    
+    
+
+<div id="vcomments"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+
+<script type="text/javascript">
+new Valine({
+    el: '#vcomments' ,
+    appId: 'EGkBVUGa2feK2skCIHg31PzP-9Nh9j0Va',
+    appKey: 'sWeyWY1vOuHso4qWaB9SUwBN',
+    notify: 'false', 
+    verify: 'false', 
+    avatar:'Huelse', 
+    placeholder: 'Nothing',
+    visitor: 'true'
+});
+</script>
+</div><section class="article navigation"><p><a class="link" href="/posts/install-transmission-in-ubuntu/"><span class="li">&larr;</span>在Ubuntu/Debian中安装Transmission</a></p><p><a class="link" href="/posts/windows-terminal/"><span class="li">&rarr;</span>Windows Terminal Here</a></p></section></div><section id="footer" class="footer"><div class="footer-wrap">
+    <p class="copyright">©2020 Huelse</p>
+    <p class="powerby"><span>Powered by </span><a href="https://gohugo.io" 
+        target="_blank">Hugo</a></p>
+</div></section><script src="/js/hljs.min.0799348a91dce12c6be4a73f943cfe78f181f4e6f6ec35c4af0fca1de377879f77cfab03c30f03a174d675737b5a9314.js" integrity="sha384-B5k0ipHc4Sxr5Kc/lDz&#43;ePGB9Ob27DXErw/KHeN3h593z6sDww8DoXTWdXN7WpMU"></script><script>hljs.initHighlightingOnLoad();</script>
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-157525767-3', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+</div>
+</body>
+
+</html>

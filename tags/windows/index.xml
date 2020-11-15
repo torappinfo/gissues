@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Windows on 有限可能</title>
+    <link>/tags/windows/</link>
+    <description>Recent content in Windows on 有限可能</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <copyright>©2020 Huelse</copyright>
+    <lastBuildDate>Tue, 03 Mar 2020 23:00:29 +0800</lastBuildDate>
+    
+        <atom:link href="/tags/windows/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Windows Terminal Here</title>
+      <link>/posts/windows-terminal/</link>
+      <pubDate>Tue, 03 Mar 2020 23:00:29 +0800</pubDate>
+      
+      <guid>/posts/windows-terminal/</guid>
+      <description>&lt;p&gt;使用Windows Terminal命令行，并将Windows Terminal添加到右键菜单&lt;/p&gt;</description>
+      
+    </item>
+    
+  </channel>
+</rss>

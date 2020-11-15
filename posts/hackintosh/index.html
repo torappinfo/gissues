@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh"><meta charset="utf-8"><meta name="generator" content="Hugo 0.78.1" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>Hackintosh黑苹果笔记&nbsp;&ndash;&nbsp;有限可能</title><link rel="stylesheet" href="/css/core.min.a256f72702f9a9e4e3a4d222d5b6c02d923d90eb8e2a31fed8cff6370dc60557ef250dc912c2301678f71c15c7abce00.css" integrity="sha384-olb3JwL5qeTjpNIi1bbALZI9kOuOKjH&#43;2M/2Nw3GBVfvJQ3JEsIwFnj3HBXHq84A"><body>
+    <div class="base-body"><section id="header" class="site header">
+    <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">有限可能</span></a></span>
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/categories/">分类</a><a class="nav item" href="/tags/">标签</a><a class="nav item" href="/chat/">闲谈</a><a class="nav item" href="/future/">展望</a><a class="nav item" href="/about/">关于</a><a class="nav item" href="https://github.com/Huelse"target="_blank">github</a></nav></div></span></div><div class="site slogan"><span class="title">limited</span></div></section><div id="content"><div class="article-container"><section class="article header">
+    <h1 class="article title">Hackintosh黑苹果笔记</h1><p class="article date">2020-04-26</p></section><article class="article markdown-body"><p>疫情期间闲在家中，我将老主机i5-4590+技嘉B85M-D2V+GTX750Ti台式利用起来安装黑苹果，简单整理并记录下安装过程和要点。基于硬件与驱动的兼容考虑，选择安装MacOS 10.13.6，现在的最新版本已经到10.15.4了。</p>
+<h2 id="hackintosh黑苹果笔记">Hackintosh黑苹果笔记</h2>
+<h4 id="推荐的网站和资源">推荐的网站和资源</h4>
+<ul>
+<li><a href="https://blog.daliansky.net/"target="_blank">黑果小兵的部落阁</a></li>
+<li><a href="https://blog.xjn819.com/"target="_blank">Xjn&rsquo;s Blog – I AM A HFSSP</a></li>
+<li><a href="http://bbs.pcbeta.com/"target="_blank">远景论坛</a></li>
+<li><a href="https://github.com/daliansky/Hackintosh"target="_blank">黑苹果长期维护列表 - Github</a></li>
+<li><a href="https://www.balena.io/etcher/"target="_blank">Etcher烧录u盘</a></li>
+</ul>
+<h5 id="这次安装用到的文件">这次安装用到的文件</h5>
+<ul>
+<li><a href="https://mirrors.dtops.cc/iso/MacOS/daliansky_macos/10.13/"target="_blank">MacOS10.13.6(17G65)</a></li>
+<li><a href="https://github.com/lvs1974/NvidiaGraphicsFixup/releases"target="_blank">NvidiaGraphicsFixup.kexts 1.2.7</a></li>
+<li><a href="https://github.com/acidanthera/Lilu/releases"target="_blank">Lilu 1.4.3</a></li>
+<li><a href="https://github.com/Benjamin-Dobell/nvidia-update"target="_blank">nvidia-update.sh</a></li>
+<li><a href="https://sourceforge.net/projects/voodoohda/"target="_blank">voodoohda</a></li>
+</ul>
+<p>以上资源会在文章最后放出蓝奏云链接</p>
+<h4 id="个人建议">个人建议</h4>
+<ul>
+<li>在上方长期维护列表中可以找到支持的机型和其他详细情况，绝大多数都是有办法装黑苹果的，就看自己有没有一颗愿意折腾的心。</li>
+<li>一般主流的intel带核显的cpu + amd主流显卡 + 主流声卡网卡大多能驱动黑苹果。</li>
+<li>建议单独安装在一个SSD上，不要多系统，也尽量不要机械硬盘。</li>
+<li>黑苹果启动和使用的核心基本都在EFI上，配置得好都是成功的。</li>
+<li>黑苹果历史上有变色龙引导，但已经淘汰。现在的主流是Clover四叶草和Opencore，后者尚在发展中，一般新手推荐选用前者（Clover），支持多系统，也相对简单。</li>
+</ul>
+<h4 id="初次安装可观看的视频">初次安装可观看的视频</h4>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=lvSBDa8XKRQ"target="_blank">波仔油管视频 - 2020/03/17</a></li>
+<li><a href="https://www.bilibili.com/video/BV1V7411s7Vz"target="_blank">大头蔡Cass B站</a></li>
+<li>待增加&hellip;</li>
+</ul>
+<h2 id="安装历程">安装历程</h2>
+<h5 id="1准备">1.准备</h5>
+<p>一个空硬盘（最好固态盘），黑果小兵的MacOS10.13.6(17G65)镜像，16G空优盘，WEPE启动盘，Etcher烧录软件，BIOS备份</p>
+<p>驱动和软件：EmuVariableUefi-64.efi，NvidiaGraphicsFixup.kext，VoodooHDA.kext，nvidia-update.sh，ClashX.dmg(可用可不用，懂的都懂)。</p>
+<h5 id="2bios设置">2.BIOS设置</h5>
+<p>需要开启快速启动，能部分初始化设备的，这个是睡眠和后面防止引导卡+号的关键，但不需要超快速也不需要intel快速启动技术。10.13.6需要关闭核显，也就是关闭内建显示器，vt-d必须关。com串口要关闭（在spuer IO config里）。E/XHCI hand off开启，其他的配置项都默认或者auto。</p>
+<h5 id="3u盘引导并安装系统">3.U盘引导并安装系统</h5>
+<p>通过WEPE进入PE系统，给将要安装的硬盘分区，选择GPT模式，新建EFI分区至少300MB，并以4096格式化。</p>
+<p>然后再引导进入烧录苹果镜像的U盘，选择install那项，如果界面有问题就需要更换clover主题等。</p>
+<p>这个过程第一次接触的可以去看看别人发的视频，上面已经给出了链接，遇到问题上远景论坛搜索或黑果小兵哪儿，大多可以找对应问题和解决方案。</p>
+<p>比如我遇到的有，第一次启动前，需要把启动U盘里/EFI/CLOVER下config_3000和4000开头的文件全删除，具体原因黑果小兵那里说了。
+或者安装时出现&quot;安装macOS 应用程序副本已损坏，不能用来安装macOS&quot;，这个要改主板bios时间，一般“实用工具-终端”就能改，如果有win10的话，可能还要进win10修改时间并取消自动时间，然后记得拔网线。
+还有一些常见问题就不再赘述。</p>
+<h5 id="4设置clover">4.设置clover</h5>
+<p>进入系统后下载clover configuration，用不了就去系统偏好设置-安全与隐私那里允许。
+挂载安装macos的EFI分区，进入分区，把/EFI/clover/acpi/pathed/ssdt-disable-gpu.aml删除，防止屏蔽我驱动显卡。/EFI/clover/kexts/Other放入三个kexts——Lilu.kext，NvidiaGraphicsFixup.kext，VoodooHDA.kext，都是最新版本，如果原来有这几个文件可以考虑先删除再放入。然后在clover configuration设备设置-aduio 注入1，勾上重置HDA，取消勾intelhdmi。显卡设置哪里基本全留空和取消勾选，我就没打算驱动核显。机型设置可以选和自己配置最接近的，我选的是imac15.1。其他设置等深入了解后再慢慢改吧。</p>
+<h5 id="5安装显卡驱动">5.安装显卡驱动</h5>
+<p>nvidia-update.sh这个是从https://github.com/Benjamin-Dobell/nvidia-update下载的，因为比较慢（你懂的）所以可以考虑使用clash加速。在安装好驱动后重启之前，记得将驱动英伟达显卡的引导参数添nvda_drv=1加上，或者在boot界面手动选上。如果kexts中两个驱动文件没问题，ssdt-disable-gpu.aml也删除了，应该就能正常驱动显卡了。具体解决方案可以参考http://bbs.pcbeta.com/viewthread-1760140-1-2.html但不要使用他提供的文件了，可能是太旧了，反正我是用了之后在跑码阶段直接到panic问题了。</p>
+<h5 id="6享用苹果系统及后续的优化备份">6.享用苹果系统及后续的优化备份</h5>
+<p>这块内容比较简单，用好时间备份，EFI分区打压缩包备份，clover configurator或Hackintool慢慢调整等等。</p>
+<p>顺带说一个windows下挂载EFI分区的方法：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># CMD</span>
+diskpart
+<span class="c1"># 列出硬盘</span>
+list disk
+<span class="c1"># 选择硬盘 0</span>
+<span class="k">select</span> disk <span class="m">0</span>
+<span class="c1"># 列出当前硬盘的分区</span>
+list partition
+<span class="c1"># 选择分区 0</span>
+<span class="k">select</span> partition <span class="m">0</span>
+<span class="c1"># 挂载指定分区，x是指盘符</span>
+assign <span class="nv">letter</span><span class="o">=</span>x:
+<span class="c1"># 卸载分区</span>
+remove <span class="nv">letter</span><span class="o">=</span>x
+</code></pre></div><p>刷新文件资源管理器（此电脑）就可以看到你指定的EFI分区了。</p>
+<h5 id="我的截图">我的截图</h5>
+<p><a target="_blank" rel="noopener noreferrer" 
+  href="https://img.oini.top/2020/05/01/aadfe58077495.jpg"><img  src="https://img.oini.top/2020/05/01/aadfe58077495.jpg"
+        alt="macos"/></a></p>
+<p>声音：</p>
+<p><a target="_blank" rel="noopener noreferrer" 
+  href="https://img.oini.top/2020/05/01/2615b106dcf7e.jpg"><img  src="https://img.oini.top/2020/05/01/2615b106dcf7e.jpg"
+        alt/></a></p>
+<p>显卡：</p>
+<p><a target="_blank" rel="noopener noreferrer" 
+  href="https://img.oini.top/2020/05/01/73bce9b1b04a9.jpg"><img  src="https://img.oini.top/2020/05/01/73bce9b1b04a9.jpg"
+        alt/></a></p>
+<p>电源，完美支持睡眠：</p>
+<p><a target="_blank" rel="noopener noreferrer" 
+  href="https://img.oini.top/2020/05/01/94319325b845a.jpg"><img  src="https://img.oini.top/2020/05/01/94319325b845a.jpg"
+        alt/></a></p>
+<p>蓝牙，用的orico的免驱外接口：</p>
+<p><a target="_blank" rel="noopener noreferrer" 
+  href="https://img.oini.top/2020/05/01/54170125e359f.jpg"><img  src="https://img.oini.top/2020/05/01/54170125e359f.jpg"
+        alt/></a></p>
+<p>播放油管4K视频：</p>
+<p><a target="_blank" rel="noopener noreferrer" 
+  href="https://img.oini.top/2020/05/01/a01ae2f02b586.jpg"><img  src="https://img.oini.top/2020/05/01/a01ae2f02b586.jpg"
+        alt/></a></p>
+<p>跑分：</p>
+<p><a target="_blank" rel="noopener noreferrer" 
+  href="https://img.oini.top/2020/05/01/9c65c69ab0789.jpg"><img  src="https://img.oini.top/2020/05/01/9c65c69ab0789.jpg"
+        alt/></a></p>
+<h4 id="打包资源">打包资源</h4>
+<p><a href="https://lanzous.com/ic59q1i"target="_blank">kexts+驱动脚本+BIOS</a></p>
+<p><a href="https://lanzous.com/ic59pvc"target="_blank">我的EFI</a> 仅供参考，没有关-v和debug，最好还是自己配置</p>
+<p>更多待更新&hellip;</p></article><section class="article labels"><a class="category" href=/categories/%E7%AC%94%E8%AE%B0/>笔记</a><a class="tag" href=/tags/%E9%BB%91%E8%8B%B9%E6%9E%9C/>黑苹果</a><a class="tag" href=/tags/macos/>MacOS</a><a class="tag" href=/tags/hackintosh/>Hackintosh</a></section></div>
+<div class="post-comment">
+    
+    
+
+<div id="vcomments"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+
+<script type="text/javascript">
+new Valine({
+    el: '#vcomments' ,
+    appId: 'EGkBVUGa2feK2skCIHg31PzP-9Nh9j0Va',
+    appKey: 'sWeyWY1vOuHso4qWaB9SUwBN',
+    notify: 'false', 
+    verify: 'false', 
+    avatar:'Huelse', 
+    placeholder: 'Nothing',
+    visitor: 'true'
+});
+</script>
+</div><section class="article navigation"><p><a class="link" href="/posts/python-rsa/"><span class="li">&larr;</span>Python Rsa加密库的使用</a></p><p><a class="link" href="/posts/install-transmission-in-ubuntu/"><span class="li">&rarr;</span>在Ubuntu/Debian中安装Transmission</a></p></section></div><section id="footer" class="footer"><div class="footer-wrap">
+    <p class="copyright">©2020 Huelse</p>
+    <p class="powerby"><span>Powered by </span><a href="https://gohugo.io" 
+        target="_blank">Hugo</a></p>
+</div></section><script src="/js/hljs.min.0799348a91dce12c6be4a73f943cfe78f181f4e6f6ec35c4af0fca1de377879f77cfab03c30f03a174d675737b5a9314.js" integrity="sha384-B5k0ipHc4Sxr5Kc/lDz&#43;ePGB9Ob27DXErw/KHeN3h593z6sDww8DoXTWdXN7WpMU"></script><script>hljs.initHighlightingOnLoad();</script>
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-157525767-3', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+</div>
+</body>
+
+</html>

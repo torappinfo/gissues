@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh"><meta charset="utf-8"><meta name="generator" content="Hugo 0.78.1" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>Python Rsa加密库的使用&nbsp;&ndash;&nbsp;有限可能</title><link rel="stylesheet" href="/css/core.min.a256f72702f9a9e4e3a4d222d5b6c02d923d90eb8e2a31fed8cff6370dc60557ef250dc912c2301678f71c15c7abce00.css" integrity="sha384-olb3JwL5qeTjpNIi1bbALZI9kOuOKjH&#43;2M/2Nw3GBVfvJQ3JEsIwFnj3HBXHq84A"><body>
+    <div class="base-body"><section id="header" class="site header">
+    <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">有限可能</span></a></span>
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/categories/">分类</a><a class="nav item" href="/tags/">标签</a><a class="nav item" href="/chat/">闲谈</a><a class="nav item" href="/future/">展望</a><a class="nav item" href="/about/">关于</a><a class="nav item" href="https://github.com/Huelse"target="_blank">github</a></nav></div></span></div><div class="site slogan"><span class="title">limited</span></div></section><div id="content"><div class="article-container"><section class="article header">
+    <h1 class="article title">Python Rsa加密库的使用</h1><p class="article date">2020-04-27</p></section><article class="article markdown-body"><p>现在加密在日常生活中越来越常见，对人来说这是一件好事，但对计算机或者对程序员来说并不一定是件好事。一般来说，加密有对称加密和非对称加密，这里简单介绍下python下rsa非对称密码库的使用</p>
+<h2 id="python-rsa加密与解密使用">Python Rsa加密与解密使用</h2>
+<p>网上关于对称加密和非对称加密的解释已经有很多了，这里就不再赘述。简单来说，对称加密只需要一个密钥，而非对称加密需要公钥和私钥两个的密钥。python中已经有帮我们封装好加密算法的库rsa了，简单环境下会使用即可。</p>
+<p>以加密PDF文件为例的完整代码：</p>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">rsa</span>
+<span class="kn">from</span> <span class="nn">rsa</span> <span class="kn">import</span> <span class="n">common</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+
+<span class="c1"># 根据传入的安全参数n生成密钥对，返回公钥和私钥</span>
+<span class="k">def</span> <span class="nf">key_generator</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">256</span><span class="p">):</span>
+    <span class="n">pub_key</span><span class="p">,</span> <span class="n">sec_key</span> <span class="o">=</span> <span class="n">rsa</span><span class="o">.</span><span class="n">newkeys</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pub_key</span><span class="p">,</span> <span class="n">sec_key</span>
+
+
+<span class="c1"># 使用传入的公钥对文件进行加密，返回加密后的密文</span>
+<span class="k">def</span> <span class="nf">encryption</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">public_keys</span><span class="p">):</span>
+    <span class="c1"># 获取密文块的明文槽长度</span>
+    <span class="n">max_message_length</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">byte_size</span><span class="p">(</span><span class="n">public_keys</span><span class="o">.</span><span class="n">n</span><span class="p">)</span> <span class="o">-</span> <span class="mi">11</span>
+    <span class="c1"># 以二进制编码读取文件</span>
+    <span class="n">cipher_text_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">fs</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="c1"># 设置二进制串的切片轮次</span>
+        <span class="n">epoch</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">fs</span><span class="p">)</span> <span class="o">//</span> <span class="n">max_message_length</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">epoch</span><span class="p">):</span>
+            <span class="c1"># 对原始明文进行切片</span>
+            <span class="n">fragment</span> <span class="o">=</span> <span class="n">fs</span><span class="p">[</span><span class="n">max_message_length</span> <span class="o">*</span> <span class="n">i</span><span class="p">:</span> <span class="n">max_message_length</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+            <span class="c1"># 使用公钥对子串进行加密</span>
+            <span class="n">cipher_text_fragment</span> <span class="o">=</span> <span class="n">rsa</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="n">fragment</span><span class="p">,</span> <span class="n">public_key</span><span class="p">)</span>
+            <span class="c1"># 将密文块填充至列表</span>
+            <span class="n">cipher_text_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cipher_text_fragment</span><span class="p">)</span>
+        <span class="c1"># 将最后一部分明文进行加密并填充</span>
+        <span class="n">cipher_text_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rsa</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="n">fs</span><span class="p">[</span><span class="n">max_message_length</span> <span class="o">*</span> <span class="n">epoch</span><span class="p">:],</span> <span class="n">public_key</span><span class="p">))</span>
+
+    <span class="c1"># 返回密文块列表</span>
+    <span class="k">return</span> <span class="n">cipher_text_list</span>
+
+
+<span class="c1"># 使用传入的私钥对密文块列表进行解密，返回解密后的明文</span>
+<span class="k">def</span> <span class="nf">decryption</span><span class="p">(</span><span class="n">cipher_text_list</span><span class="p">,</span> <span class="n">secret_keys</span><span class="p">):</span>
+    <span class="c1"># 创建明文空间</span>
+    <span class="n">plain_text</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">fragment</span> <span class="ow">in</span> <span class="n">cipher_text_list</span><span class="p">:</span>
+        <span class="c1"># 使用私钥对密文块进行解密</span>
+        <span class="n">plain_text_fragment</span> <span class="o">=</span> <span class="n">rsa</span><span class="o">.</span><span class="n">decrypt</span><span class="p">(</span><span class="n">fragment</span><span class="p">,</span> <span class="n">secret_keys</span><span class="p">)</span>
+        <span class="c1"># 将明文串合并至明文空间</span>
+        <span class="n">plain_text</span> <span class="o">+=</span> <span class="n">plain_text_fragment</span>
+
+    <span class="c1"># 返回明文</span>
+    <span class="k">return</span> <span class="n">plain_text</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&#34;__main__&#34;</span><span class="p">:</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">path1</span> <span class="o">=</span> <span class="s1">&#39;./test1.pdf&#39;</span>
+    <span class="n">public_key</span><span class="p">,</span> <span class="n">secret_key</span> <span class="o">=</span> <span class="n">key_generator</span><span class="p">()</span>
+    <span class="c1"># 以下注释部分为序列化</span>
+    <span class="c1"># import pickle</span>
+    <span class="c1"># pickle.dump(public_key, open(&#39;pub_key.bin&#39;, &#39;wb&#39;))</span>
+    <span class="c1"># pickle.dump(secret_key, open(&#39;sec_key.bin&#39;, &#39;wb&#39;))</span>
+
+    <span class="n">cipher</span> <span class="o">=</span> <span class="n">encryption</span><span class="p">(</span><span class="n">path1</span><span class="p">,</span> <span class="n">public_key</span><span class="p">)</span>
+    <span class="c1"># pickle.dump(cipher, open(&#39;cipher.bin&#39;, &#39;wb&#39;))</span>
+
+    <span class="c1"># cipher = pickle.load(open(&#39;cipher.bin&#39;, &#39;rb&#39;))</span>
+    <span class="c1"># secret_key = pickle.load(open(&#39;sec_key.bin&#39;, &#39;rb&#39;))</span>
+
+    <span class="n">plain</span> <span class="o">=</span> <span class="n">decryption</span><span class="p">(</span><span class="n">cipher</span><span class="p">,</span> <span class="n">secret_key</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">plain</span> <span class="o">==</span> <span class="nb">open</span><span class="p">(</span><span class="n">path1</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">():</span>
+        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;ok&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">)</span>
+    <span class="c1"># with open(&#39;test1_0.pdf&#39;, &#39;wb&#39;) as f:</span>
+    <span class="c1">#     f.write(plain)</span>
+    <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">,</span> <span class="s1">&#39; seconds.&#39;</span><span class="p">)</span>
+    <span class="k">pass</span>
+
+</code></pre></div><p>一般计算时间和加密内容是正相关的，可以按需要调整参数n，一般为2的次幂。</p>
+<p>细心的小伙伴一定也发现了解密过程是最耗时间的。</p>
+<p>上述代码中还有签名和验证等方法未涉及，想知道可以自己去尝试。</p></article><section class="article labels"><a class="category" href=/categories/%E7%BC%96%E7%A8%8B/>编程</a><a class="tag" href=/tags/%E5%8A%A0%E5%AF%86/>加密</a><a class="tag" href=/tags/rsa/>rsa</a><a class="tag" href=/tags/python/>python</a></section></div>
+<div class="post-comment">
+    
+    
+
+<div id="vcomments"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+
+<script type="text/javascript">
+new Valine({
+    el: '#vcomments' ,
+    appId: 'EGkBVUGa2feK2skCIHg31PzP-9Nh9j0Va',
+    appKey: 'sWeyWY1vOuHso4qWaB9SUwBN',
+    notify: 'false', 
+    verify: 'false', 
+    avatar:'Huelse', 
+    placeholder: 'Nothing',
+    visitor: 'true'
+});
+</script>
+</div><section class="article navigation"><p><a class="link" href="/posts/my-software/"><span class="li">&larr;</span>我常用的软件及小工具</a></p><p><a class="link" href="/posts/hackintosh/"><span class="li">&rarr;</span>Hackintosh黑苹果笔记</a></p></section></div><section id="footer" class="footer"><div class="footer-wrap">
+    <p class="copyright">©2020 Huelse</p>
+    <p class="powerby"><span>Powered by </span><a href="https://gohugo.io" 
+        target="_blank">Hugo</a></p>
+</div></section><script src="/js/hljs.min.0799348a91dce12c6be4a73f943cfe78f181f4e6f6ec35c4af0fca1de377879f77cfab03c30f03a174d675737b5a9314.js" integrity="sha384-B5k0ipHc4Sxr5Kc/lDz&#43;ePGB9Ob27DXErw/KHeN3h593z6sDww8DoXTWdXN7WpMU"></script><script>hljs.initHighlightingOnLoad();</script>
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-157525767-3', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+</div>
+</body>
+
+</html>

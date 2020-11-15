@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>经验 on 有限可能</title>
+    <link>/tags/%E7%BB%8F%E9%AA%8C/</link>
+    <description>Recent content in 经验 on 有限可能</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <copyright>©2020 Huelse</copyright>
+    <lastBuildDate>Sun, 23 Aug 2020 21:35:13 +0800</lastBuildDate>
+    
+        <atom:link href="/tags/%E7%BB%8F%E9%AA%8C/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>我常用的软件及小工具</title>
+      <link>/posts/my-software/</link>
+      <pubDate>Sun, 23 Aug 2020 21:35:13 +0800</pubDate>
+      
+      <guid>/posts/my-software/</guid>
+      <description>&lt;p&gt;我常用的软件及小工具，能够提高一定程度的工作效率&lt;/p&gt;</description>
+      
+    </item>
+    
+    <item>
+      <title>在Ubuntu/Debian中安装Transmission</title>
+      <link>/posts/install-transmission-in-ubuntu/</link>
+      <pubDate>Sun, 15 Mar 2020 18:32:11 +0800</pubDate>
+      
+      <guid>/posts/install-transmission-in-ubuntu/</guid>
+      <description>&lt;p&gt;Transmission是一种BitTorrent客户端,老司机们必不可少的得力工具之一，也是PT友做种的首选。这里简单介绍Debian\Ubantu下安装Transmission的教程。&lt;/p&gt;</description>
+      
+    </item>
+    
+    <item>
+      <title>pyenv使用笔记</title>
+      <link>/posts/pyenv/</link>
+      <pubDate>Sun, 08 Mar 2020 21:10:42 +0800</pubDate>
+      
+      <guid>/posts/pyenv/</guid>
+      <description>&lt;p&gt;方便且高效的Python多版本管理器——pyenv使用笔记，安装、使用和离线安装方法&lt;/p&gt;</description>
+      
+    </item>
+    
+    <item>
+      <title>Windows Terminal Here</title>
+      <link>/posts/windows-terminal/</link>
+      <pubDate>Tue, 03 Mar 2020 23:00:29 +0800</pubDate>
+      
+      <guid>/posts/windows-terminal/</guid>
+      <description>&lt;p&gt;使用Windows Terminal命令行，并将Windows Terminal添加到右键菜单&lt;/p&gt;</description>
+      
+    </item>
+    
+  </channel>
+</rss>
