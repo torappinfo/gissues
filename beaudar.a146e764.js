@@ -457,7 +457,7 @@ function loadToken() {
             return [2, token.value];
           }
 
-          url = _beaudarApi.GISSUES_API + "/token";
+          url = _beaudarApi.GISSUES_API + "/Gissues/token.php";
           return [4, fetch(url, {
             method: 'POST',
             mode: 'cors',
@@ -522,10 +522,10 @@ function readPageAttributes() {
       }
     }
   } else if ('issue-number' in params) {
-    issueNumber = +params['issue-number'];
+    issueNumber = params['issue-number'];
 
-    if (issueNumber.toString(10) !== params['issue-number']) {
-      throw new Error("issue-number \u65E0\u6548\uFF0C" + params['issue-number']);
+    if (issueNumber.slice(0, 6) !== issueNumber) {
+      throw new Error("issue-number \u65E0\u6548\uFF0C" + issueNumber + " \u5FC5\u987B\u662F6\u4E2A\u5B57\u7B26\u4E32");
     }
   } else {
     throw new Error('"issue-term" 或 "issue-number" 是必须项');
@@ -560,6 +560,7 @@ function readPageAttributes() {
     title: params.title,
     description: params.description,
     label: params.label,
+    author: params.author,
     theme: params.theme || 'github-light',
     loading: params.loading || 'true'
   };
@@ -749,21 +750,25 @@ var __generator = void 0 && (void 0).__generator || function (thisArg, body) {
   }
 };
 
-var GITHUB_API = 'https://api.github.com/';
-var GITHUB_ENCODING__HTML_JSON = 'application/vnd.github.VERSION.html+json';
-var GITHUB_ENCODING__HTML = 'application/vnd.github.VERSION.html';
+var GITHUB_API = 'https://gitee.com/api/v5/';
+var GITHUB_ENCODING__HTML_JSON = 'application/html+json';
+var GITHUB_ENCODING__HTML = 'text/html';
 var GITHUB_ENCODING__REACTIONS_PREVIEW = 'application/vnd.github.squirrel-girl-preview';
 var PAGE_SIZE = 25;
 exports.PAGE_SIZE = PAGE_SIZE;
 var reactionTypes = ['+1', '-1', 'laugh', 'hooray', 'confused', 'heart', 'rocket', 'eyes'];
 exports.reactionTypes = reactionTypes;
+var author;
 var owner;
 var repo;
+var label;
 var branch;
 
 function setRepoContext(context) {
+  author = context.author;
   owner = context.owner;
   repo = context.repo;
+  label = context.label;
   branch = context.branch;
 }
 
@@ -889,8 +894,7 @@ function loadJsonFile(path, html) {
 }
 
 function loadIssueByTerm(term) {
-  var q = "\"" + term + "\" type:issue in:title repo:" + owner + "/" + repo;
-  var request = githubRequest("search/issues?q=" + encodeURIComponent(q) + "&sort=created&order=asc");
+  var request = githubRequest("search/issues?q=" + encodeURIComponent(term) + "&repo=" + owner + "%2F" + repo + "&author=" + author + "&label=" + label + "&sort=updated_at&order=asc");
   return githubFetch(request).then(function (response) {
     if (response === undefined || !response.ok) {
       throw new Error('搜索 Issues 失败。');
@@ -2421,8 +2425,8 @@ function bootstrap() {
         case 5:
           error_1 = _b.sent();
           errorElement = new _newErrorElement.NewErrorElement();
-          errorElement.createMsgElement("api.github.com \u8BF7\u6C42\u5931\u8D25", "<p>\u53EF\u70B9\u51FB\u201C\u5237\u65B0\u201D\uFF0C\u5C1D\u8BD5\u89E3\u51B3\u6B64\u95EE\u9898\u3002</p>", true);
-          throw new Error("api.github.com \u8BF7\u6C42\u5931\u8D25\u3002" + error_1);
+          errorElement.createMsgElement("gitee.com \u8BF7\u6C42\u5931\u8D25", "<p>\u53EF\u70B9\u51FB\u201C\u5237\u65B0\u201D\uFF0C\u5C1D\u8BD5\u89E3\u51B3\u6B64\u95EE\u9898\u3002</p>", true);
+          throw new Error("gitee.com \u8BF7\u6C42\u5931\u8D25\u3002" + error_1);
 
         case 6:
           timeline = new _timelineComponent.TimelineComponent(user, issue);
@@ -2472,7 +2476,7 @@ function bootstrap() {
 
                   case 5:
                     errorElement = new _newErrorElement.NewErrorElement();
-                    errorElement.createMsgElement("\u9519\u8BEF: <code>" + origin + "</code> \u8BC4\u8BBA\u4E0D\u5141\u8BB8\u53D1\u5E03\u5230\u4ED3\u5E93 <code>" + owner + "/" + repo + "</code>", "\n      <p>&emsp;&emsp;\u8BF7\u786E\u8BA4 <code>" + owner + "/" + repo + "</code> \u662F\u672C\u7AD9\u70B9\u8BC4\u8BBA\u7684\u6B63\u786E\u4ED3\u5E93\u3002\u5982\u679C\u60A8\u62E5\u6709\u6B64\u4ED3\u5E93\uFF0C\n      <a href=\"https://github.com/" + owner + "/" + repo + "/edit/" + label + "/gissues.json\" target=\"_blank\">\n        <strong>\u6DFB\u52A0\u6216\u66F4\u65B0 gissues.json</strong>\n      </a>\n      \u6DFB\u52A0 <code>" + origin + "</code> \u5230\u6765\u6E90\u5217\u8868\u3002</p>\n      <p>\u9700\u8981\u914D\u7F6E\uFF1A</p>\n      <pre><code>" + JSON.stringify({
+                    errorElement.createMsgElement("\u9519\u8BEF: <code>" + origin + "</code> \u8BC4\u8BBA\u4E0D\u5141\u8BB8\u53D1\u5E03\u5230\u4ED3\u5E93 <code>" + owner + "/" + repo + "</code>", "\n      <p>&emsp;&emsp;\u8BF7\u786E\u8BA4 <code>" + owner + "/" + repo + "</code> \u662F\u672C\u7AD9\u70B9\u8BC4\u8BBA\u7684\u6B63\u786E\u4ED3\u5E93\u3002\u5982\u679C\u60A8\u62E5\u6709\u6B64\u4ED3\u5E93\uFF0C\n      <a href=\"https://gitee.com/" + owner + "/" + repo + "/edit/" + label + "/gissues.json\" target=\"_blank\">\n        <strong>\u6DFB\u52A0\u6216\u66F4\u65B0 gissues.json</strong>\n      </a>\n      \u6DFB\u52A0 <code>" + origin + "</code> \u5230\u6765\u6E90\u5217\u8868\u3002</p>\n      <p>\u9700\u8981\u914D\u7F6E\uFF1A</p>\n      <pre><code>" + JSON.stringify({
                       origins: [origin]
                     }, null, 2) + "</code></pre>\n      ");
                     throw new Error("\u8BC4\u8BBA\u53D1\u5E03\u88AB\u7981\u6B62\uFF0C<code>" + origin + "</code> \u8BC4\u8BBA\u4E0D\u5141\u8BB8\u53D1\u5E03\u5230\u4ED3\u5E93 <code>" + owner + "/" + repo + "</code>\u3002");

@@ -190,7 +190,7 @@ if (token) {
 var script = document.currentScript;
 
 if (script === undefined) {
-  script = document.querySelector('script[src^="https://gissues.gitee.io/client.js"],script[src^="http://localhost:4000/client.js"]');
+  script = document.querySelector('script[src^="https://gissues.gitee2.io/client.js"],script[src^="http://localhost2:4000/client.js"]');
 }
 
 var attrs = {};
