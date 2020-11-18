@@ -228,7 +228,7 @@ var _measure = require("./measure");
 
 var NewErrorElement = function () {
   function NewErrorElement() {
-    this.beaudarArticle = "\n  <article class=\"timeline-comment\">\n    <a class=\"avatar\" href=\"https://github.com/yakeing\" target=\"_blank\">\n      <img height=\"44\" width=\"44\" src=\"/logo.png\">\n    </a>\n    <div class=\"comment\">\n      <header class=\"comment-header\">\n        <span class=\"comment-meta\">\n          <strong class=\"comment-author\">Gissues</strong> \u7CFB\u7EDF\u6D88\u606F\n        </span>\n      </header>\n      <article id=\"beaudarMsg\" class=\"markdown-body\">\n      </article>\n    </div>\n  </article>\n";
+    this.beaudarArticle = "\n  <article class=\"timeline-comment\">\n    <a class=\"avatar\" href=\"https://gitee.com/yakeing\" target=\"_blank\">\n      <img height=\"44\" width=\"44\" src=\"https://gitee.com/gissues/Readme/raw/main/logo/logo_50x50.png\">\n    </a>\n    <div class=\"comment\">\n      <header class=\"comment-header\">\n        <span class=\"comment-meta\">\n          <strong class=\"comment-author\">Gissues</strong> \u7CFB\u7EDF\u6D88\u606F\n        </span>\n      </header>\n      <article id=\"beaudarMsg\" class=\"markdown-body\">\n      </article>\n    </div>\n  </article>\n";
 
     if (document.querySelector('.timeline') === null) {
       this.isTimelineNull = true;
@@ -2190,7 +2190,7 @@ function beaudarLoadingStatus(page) {
       if (JSON.parse(page.loading)) {
         beaudarLoading = document.createElement('div');
         beaudarLoading.classList.add('beaudarLoading');
-        beaudarLoading.innerHTML = "\n      <a href=\"https://gissues.gitee.io\" target=\"_blank\">\n        <img width=\"50px\" height=\"50px\" src=\"/logo.png\" title=\"Gissues\">\n      </a>";
+        beaudarLoading.innerHTML = "\n      <a href=\"https://gissues.gitee.io\" target=\"_blank\">\n        <img width=\"50px\" height=\"50px\" src=\"https://gitee.com/gissues/Readme/raw/main/logo/logo_50x50.png\" title=\"Gissues\">\n      </a>";
         loadingElement.appendChild(beaudarLoading);
       }
 

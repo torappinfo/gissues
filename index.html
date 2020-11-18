@@ -9,11 +9,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://gitee.com">
   <link rel="preconnect" href="https://gissues.gitee.io">
-
-    <link id="theme-stylesheet" rel="stylesheet" href="/stylesheets/themes/github-light/index.css">
+  
+    <link id="theme-stylesheet" rel="stylesheet" href="http://localhost:4000/stylesheets/themes/github-light/index.css">
   <link rel="icon" type="image/png" href="/favicon.2e70f008.png">
-
-    <link rel="canonical" href="/index.html">
+  
+    <link rel="canonical" href="http://localhost:4000/index.html">
   <meta name="application-name" content="Gissues">
   <meta name="theme-color" content="#ffffff">
   <meta property="og:title" content="Gissues">
@@ -32,7 +32,7 @@ if (!window.Promise || !window.fetch) {
   <canvas id="confetti"> </canvas>
   <main class="timeline">
     <article class="timeline-comment">
-      <a class="avatar" href="https://gitee.com/gissues" target="_blank">
+      <a class="avatar" href="https://gissues.gitee.io" target="_blank">
         <img height="44" width="44" src="/logo.de01bb0e.png">
       </a>
       <div class="comment">
@@ -44,7 +44,7 @@ if (!window.Promise || !window.fetch) {
         <article class="markdown-body">
           <h3 id="gitee-issues-">Gitee issues 评论插件</h3>
 <blockquote>
-<p>Gissues 名称源于 Gitee issues 的简写，是 <a href="http://utteranc.es">英文版Utterances</a> 和 <a href="https://github.com/beaudar">中文版beaudar</a> 的结合体。</p>
+<p>Gissues 名称源于 Gitee issues 的简写，是 <a href="https://github.com/utterance">Utterances</a> 和 <a href="https://github.com/beaudar">beaudar</a> 的结合体。</p>
 </blockquote>
 <ul>
 <li>项目开源 <a href="https://gitee.com/gissues">Gissues</a></li>
@@ -52,6 +52,7 @@ if (!window.Promise || !window.fetch) {
 <li>不保留数据，所有数据保存在用户 Gitee issues 中。</li>
 <li>有源于 <a href="https://primer.style/">Github primer</a> 的多个主题。</li>
 <li>轻量化，没有字体下载，没有 JS 框架加载，没有 polyfills。</li>
+<li>非常稳定，国内服务器。</li>
 </ul>
 <h4 id="-utterances-gissues-">与 Utterances 比较，Gissues 增加了什么？</h4>
 <ul>
@@ -70,7 +71,7 @@ if (!window.Promise || !window.fetch) {
 <li>分支选项，增加仓库分支项用于校验。 获取公开库指定分支代码，校验 gissues.json 配置，默认 &#39;master&#39;。</li>
 </ul>
 <h4 id="gissues-">Gissues 是如何工作的？</h4>
-<p>Gissues 加载时，将使用 Gitee issue 搜索 API 根据 url，“路径名”或“标题”查找与页面相关的 issue。如果找不到与页面匹配的 issue，即没有评论，当有人首次发表评论时，<a href="https://gitee.com/gissues">Gissues</a> 会自动创建一个 issue。</p>
+<p>Gissues 加载时，将使用 Gitee issues 搜索 API 根据 url，<strong>路径名</strong>或 <strong>标题</strong> 查找与页面相关的 issues。如果找不到与页面匹配的 issues，即没有评论，当有人首次发表评论时，<a href="https://gitee.com/gissues/Feedback/issues">Gissues</a> 会自动创建一个 issues。</p>
           <h2 id="configuration">配置并获取代码</h2>
           <div class="clear-both">
             	<h2 id="-">样式表参考</h2>
@@ -105,11 +106,14 @@ if (!window.Promise || !window.fetch) {
   <script src="/confetti.93607243.js"></script>
 
   <section id="Gissues">
-
-      <script src="/client.js" repo="gissues/Readme" issue-term="pathname" label="评论" crossorigin="anonymous" theme="github-light" async="">
+    
+      <script src="http://localhost:4000/client.js" repo="gissues/Readme" issue-term="pathname" label="评论" crossorigin="anonymous" theme="github-light" async="">
       </script>
     </section>
-  <div class="copyright">&copy; 2020 <b>Yakeing</b> | By TypeScript and gitee.com</div>
+  <div class="copyright">
+    &copy; 2020 Gissues By <b>Yakeing</b><br>
+    TypeScript and Gitee Pages<br>
+    粤ICP备12009483号</div>
 </body>
 
 </html>
