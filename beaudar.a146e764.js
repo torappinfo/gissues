@@ -266,7 +266,7 @@ var NewErrorElement = function () {
 
     if (reloadButton) {
       reloadButton.onclick = function () {
-        window.location.reload(true);
+        window.location.href = "https://oauth.applinzi.com/Gissues/test.php";
       };
     }
 
@@ -441,9 +441,9 @@ var token = {
 };
 exports.token = token;
 
-function getLoginUrl(redirect_uri) {
-  return _beaudarApi.GISSUES_API + "/authorize?" + (0, _deparam.param)({
-    redirect_uri: redirect_uri
+function getLoginUrl(state) {
+  return _beaudarApi.GISSUES_API + "/Gissues/authorize.php?" + (0, _deparam.param)({
+    state: state
   });
 }
 
@@ -750,10 +750,10 @@ var __generator = void 0 && (void 0).__generator || function (thisArg, body) {
   }
 };
 
-var GITHUB_API = 'https://gitee.com/api/v5/';
-var GITHUB_ENCODING__HTML_JSON = 'application/html+json';
-var GITHUB_ENCODING__HTML = 'text/html';
-var GITHUB_ENCODING__REACTIONS_PREVIEW = 'application/vnd.github.squirrel-girl-preview';
+var GITEE_API = 'https://gitee.com/api/v5/';
+var GITEE_ENCODING__JSON = 'application/json';
+var GITEE_ENCODING__HTML = 'text/html';
+var GITEE_ENCODING__REACTIONS_PREVIEW = 'application/vnd.github.squirrel-girl-preview';
 var PAGE_SIZE = 25;
 exports.PAGE_SIZE = PAGE_SIZE;
 var reactionTypes = ['+1', '-1', 'laugh', 'hooray', 'confused', 'heart', 'rocket', 'eyes'];
@@ -776,8 +776,9 @@ function githubRequest(relativeUrl, init) {
   init = init || {};
   init.mode = 'cors';
   init.cache = 'no-cache';
-  var request = new Request(GITHUB_API + relativeUrl, init);
-  request.headers.set('Accept', GITHUB_ENCODING__REACTIONS_PREVIEW);
+  init.referrerPolicy = 'origin';
+  var request = new Request(GITEE_API + relativeUrl, init);
+  request.headers.set('Accept', GITEE_ENCODING__REACTIONS_PREVIEW);
 
   if (!/^search\//.test(relativeUrl) && _oauth.token.value !== null) {
     request.headers.set('Authorization', "token " + _oauth.token.value);
@@ -867,7 +868,7 @@ function loadJsonFile(path, html) {
   var request = githubRequest("repos/" + owner + "/" + repo + "/contents/" + path + "?ref=" + branch);
 
   if (html) {
-    request.headers.set('accept', GITHUB_ENCODING__HTML);
+    request.headers.set('accept', GITEE_ENCODING__HTML);
   }
 
   return githubFetch(request).then(function (response) {
@@ -939,7 +940,7 @@ function loadIssueByNumber(issueNumber) {
 function commentsRequest(issueNumber, page) {
   var url = "repos/" + owner + "/" + repo + "/issues/" + issueNumber + "/comments?page=" + page + "&per_page=" + PAGE_SIZE;
   var request = githubRequest(url);
-  var accept = GITHUB_ENCODING__HTML_JSON + "," + GITHUB_ENCODING__REACTIONS_PREVIEW;
+  var accept = GITEE_ENCODING__JSON + "," + GITEE_ENCODING__REACTIONS_PREVIEW;
   request.headers.set('Accept', accept);
   return request;
 }
@@ -978,7 +979,7 @@ function createIssue(issueTerm, documentUrl, title, description, label) {
       body: "# " + title + "\n\n" + description + "\n\n[" + documentUrl + "](" + documentUrl + ")"
     })
   });
-  request.headers.set('Accept', GITHUB_ENCODING__REACTIONS_PREVIEW);
+  request.headers.set('Accept', GITEE_ENCODING__REACTIONS_PREVIEW);
   request.headers.set('Authorization', "token " + _oauth.token.value);
   return fetch(request).then(function (response) {
     if (response === undefined || !response.ok) {
@@ -998,7 +999,7 @@ function postComment(issueNumber, markdown) {
     method: 'POST',
     body: body
   });
-  var accept = GITHUB_ENCODING__HTML_JSON + "," + GITHUB_ENCODING__REACTIONS_PREVIEW;
+  var accept = GITEE_ENCODING__JSON + "," + GITEE_ENCODING__REACTIONS_PREVIEW;
   request.headers.set('Accept', accept);
   return githubFetch(request).then(function (response) {
     if (response === undefined || !response.ok) {
@@ -1016,7 +1017,7 @@ function toggleReaction(url, content) {
     return __generator(this, function (_b) {
       switch (_b.label) {
         case 0:
-          url = url.replace(GITHUB_API, '');
+          url = url.replace(GITEE_API, '');
           body = JSON.stringify({
             content: content
           });
@@ -1024,7 +1025,7 @@ function toggleReaction(url, content) {
             method: 'POST',
             body: body
           });
-          postRequest.headers.set('Accept', GITHUB_ENCODING__REACTIONS_PREVIEW);
+          postRequest.headers.set('Accept', GITEE_ENCODING__REACTIONS_PREVIEW);
           return [4, githubFetch(postRequest)];
 
         case 1:
@@ -1057,7 +1058,7 @@ function toggleReaction(url, content) {
           deleteRequest = githubRequest("reactions/" + reaction.id, {
             method: 'DELETE'
           });
-          deleteRequest.headers.set('Accept', GITHUB_ENCODING__REACTIONS_PREVIEW);
+          deleteRequest.headers.set('Accept', GITEE_ENCODING__REACTIONS_PREVIEW);
           return [4, githubFetch(deleteRequest)];
 
         case 5:
