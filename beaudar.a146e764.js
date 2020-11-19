@@ -266,7 +266,7 @@ var NewErrorElement = function () {
 
     if (reloadButton) {
       reloadButton.onclick = function () {
-        window.location.href = "https://oauth.applinzi.com/Gissues/test.php";
+        window.location.reload(true);
       };
     }
 
@@ -753,7 +753,7 @@ var __generator = void 0 && (void 0).__generator || function (thisArg, body) {
 var GITEE_API = 'https://gitee.com/api/v5/';
 var GITEE_ENCODING__JSON = 'application/json';
 var GITEE_ENCODING__HTML = 'text/html';
-var GITEE_ENCODING__REACTIONS_PREVIEW = 'application/vnd.github.squirrel-girl-preview';
+var GITEE_ENCODING__REACTIONS_PREVIEW = 'text/plain, */*';
 var PAGE_SIZE = 25;
 exports.PAGE_SIZE = PAGE_SIZE;
 var reactionTypes = ['+1', '-1', 'laugh', 'hooray', 'confused', 'heart', 'rocket', 'eyes'];
@@ -778,7 +778,7 @@ function githubRequest(relativeUrl, init) {
   init.cache = 'no-cache';
   init.referrerPolicy = 'origin';
   var request = new Request(GITEE_API + relativeUrl, init);
-  request.headers.set('Accept', GITEE_ENCODING__REACTIONS_PREVIEW);
+  request.headers.set('Accept', GITEE_ENCODING__JSON);
 
   if (!/^search\//.test(relativeUrl) && _oauth.token.value !== null) {
     request.headers.set('Authorization', "token " + _oauth.token.value);
@@ -903,18 +903,18 @@ function loadIssueByTerm(term) {
 
     return response.json();
   }).then(function (results) {
-    if (results.total_count === 0) {
+    if (results.length === 0) {
       return null;
     }
 
-    if (results.total_count > 1) {
-      console.warn("\u5339\u914D\u5230\u591A\u4E2A\u95EE\u9898 \"" + q + "\"");
+    if (results.length > 1) {
+      console.warn("\u5339\u914D\u5230 " + results.length + " \u4E2A\u95EE\u9898 \"" + term + "\"");
     }
 
     term = term.toLowerCase();
 
-    for (var _i = 0, _a = results.items; _i < _a.length; _i++) {
-      var result = _a[_i];
+    for (var _i = 0, results_1 = results; _i < results_1.length; _i++) {
+      var result = results_1[_i];
 
       if (result.title.toLowerCase().indexOf(term) !== -1) {
         return result;
@@ -1399,6 +1399,8 @@ Object.defineProperty(exports, "__esModule", {
 exports.processRenderedMarkdown = processRenderedMarkdown;
 exports.CommentComponent = void 0;
 
+var _pageAttributes = require("./page-attributes");
+
 var _github = require("./github");
 
 var _timeAgo = require("./time-ago");
@@ -1407,7 +1409,8 @@ var _measure = require("./measure");
 
 var _reactions = require("./reactions");
 
-var avatarArgs = '?v=3&s=88';
+var GITEE_URL = 'https://gitee.com';
+var avatarArgs = '!avatar60';
 var displayAssociations = {
   COLLABORATOR: '合作者',
   CONTRIBUTOR: '贡献者',
@@ -1415,19 +1418,42 @@ var displayAssociations = {
   OWNER: '作者',
   FIRST_TIME_CONTRIBUTOR: '初期贡献者',
   FIRST_TIMER: '沙发',
-  NONE: ''
+  NONE: '群众'
 };
 
 var CommentComponent = function () {
   function CommentComponent(comment, currentUser, locked) {
     this.comment = comment;
     this.currentUser = currentUser;
-    var user = comment.user,
-        html_url = comment.html_url,
+    var body = comment.body,
         created_at = comment.created_at,
-        body_html = comment.body_html,
-        author_association = comment.author_association,
-        reactions = comment.reactions;
+        id = comment.id,
+        source = comment.source,
+        target = comment.target,
+        updated_at = comment.updated_at,
+        user = comment.user;
+    console.log(comment);
+    var author_association = user.login === currentUser ? "OWNER" : "NONE";
+    var iconfont_url = "https://api.github.com/reactions";
+    var reactions = {
+      "+1": 5,
+      "-1": 1,
+      confused: 1,
+      eyes: 4,
+      heart: 3,
+      hooray: 3,
+      laugh: 4,
+      rocket: 3,
+      total_count: 22
+    };
+    var html_url = GITEE_URL + "/" + _pageAttributes.pageAttributes.owner + "/" + _pageAttributes.pageAttributes.repo + "/issues/" + target.issue.number + "#note_" + id;
+
+    if ("https://gitee.com/assets/no_portrait.png" == user.avatar_url) {
+      var avatar_url = user.avatar_url;
+    } else {
+      var avatar_url = "" + user.avatar_url + avatarArgs;
+    }
+
     this.element = document.createElement('article');
     this.element.classList.add('timeline-comment');
 
@@ -1446,16 +1472,16 @@ var CommentComponent = function () {
 
     if (!locked) {
       if (currentUser) {
-        headerReactionsMenu = (0, _reactions.getReactionsMenuHtml)(comment.reactions.url, 'right');
-        footerReactionsMenu = (0, _reactions.getReactionsMenuHtml)(comment.reactions.url, 'center');
+        headerReactionsMenu = (0, _reactions.getReactionsMenuHtml)(iconfont_url, 'right');
+        footerReactionsMenu = (0, _reactions.getReactionsMenuHtml)(iconfont_url, 'center');
       } else {
         headerReactionsMenu = (0, _reactions.getSignInToReactMenuHtml)('right');
         footerReactionsMenu = (0, _reactions.getSignInToReactMenuHtml)('center');
       }
     }
 
-    this.element.innerHTML = "\n      <a class=\"avatar\" href=\"" + user.html_url + "\" target=\"_blank\">\n        <img alt=\"@" + user.login + "\" height=\"44\" width=\"44\"\n              src=\"" + user.avatar_url + avatarArgs + "\">\n      </a>\n      <div class=\"comment\">\n        <header class=\"comment-header\">\n          <span class=\"comment-meta\">\n            <a class=\"text-link comment-author\" href=\"" + user.html_url + "\" target=\"_blank\"><strong>" + user.login + "</strong></a>\n            \u8BC4\u8BBA<a class=\"text-link\" href=\"" + html_url + "\" target=\"_blank\">" + (0, _timeAgo.timeAgo)(Date.now(), new Date(created_at)) + "</a>\n          </span>\n          <div class=\"comment-actions\">\n            " + (association ? "<span class=\"author-association-badge\">" + association + "</span>" : '') + "\n            " + headerReactionsMenu + "\n          </div>\n        </header>\n        <div class=\"markdown-body markdown-body-scrollable\">\n          " + body_html + "\n        </div>\n        <div class=\"comment-footer\" reaction-count=\"" + reactionCount + "\" reaction-url=\"" + reactions.url + "\">\n          <form class=\"reaction-list BtnGroup\" action=\"javascript:\">\n            " + _github.reactionTypes.map(function (id) {
-      return (0, _reactions.getReactionHtml)(reactions.url, id, !currentUser || locked, reactions[id]);
+    this.element.innerHTML = "\n      <a class=\"avatar\" href=\"" + user.html_url + "\" target=\"_blank\">\n        <img alt=\"@" + user.login + "\" height=\"44\" width=\"44\" src=\"" + avatar_url + "\">\n      </a>\n      <div class=\"comment\">\n        <header class=\"comment-header\">\n          <span class=\"comment-meta\">\n            <a class=\"text-link comment-author\" href=\"" + user.html_url + "\" target=\"_blank\"><strong>" + user.name + "</strong></a>\n            \u8BC4\u8BBA<a class=\"text-link\" href=\"" + html_url + "\" target=\"_blank\">" + (0, _timeAgo.timeAgo)(Date.now(), new Date(created_at)) + "</a>\n          </span>\n          <div class=\"comment-actions\">\n            " + (association ? "<span class=\"author-association-badge\">" + association + "</span>" : '') + "\n            " + headerReactionsMenu + "\n          </div>\n        </header>\n        <div class=\"markdown-body markdown-body-scrollable\">\n          " + body + "\n        </div>\n        <div class=\"comment-footer\" reaction-count=\"" + reactionCount + "\" reaction-url=\"" + iconfont_url + "\">\n          <form class=\"reaction-list BtnGroup\" action=\"javascript:\">\n            " + _github.reactionTypes.map(function (id) {
+      return (0, _reactions.getReactionHtml)(iconfont_url, id, !currentUser || locked, reactions[id]);
     }).join('') + "\n          </form>\n          " + footerReactionsMenu + "\n        </div>\n      </div>";
     var markdownBody = this.element.querySelector('.markdown-body');
     var emailToggle = markdownBody.querySelector('.email-hidden-toggle a');
@@ -1510,7 +1536,7 @@ function processRenderedMarkdown(markdownBody) {
     return a.href = 'https://gitee.com' + a.pathname;
   });
 }
-},{"./github":"github.ts","./time-ago":"time-ago.ts","./measure":"measure.ts","./reactions":"reactions.ts"}],"timeline-component.ts":[function(require,module,exports) {
+},{"./page-attributes":"page-attributes.ts","./github":"github.ts","./time-ago":"time-ago.ts","./measure":"measure.ts","./reactions":"reactions.ts"}],"timeline-component.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1959,7 +1985,13 @@ var NewCommentComponent = function () {
     if (user) {
       this.avatarAnchor.href = user.html_url;
       this.avatar.alt = '@' + user.login;
-      this.avatar.src = user.avatar_url + '?v=3&s=88';
+
+      if ("https://gitee.com/assets/no_portrait.png" == user.avatar_url) {
+        this.avatar.src = user.avatar_url;
+      } else {
+        this.avatar.src = user.avatar_url + '!avatar60';
+      }
+
       this.textarea.disabled = false;
       this.textarea.placeholder = '发表评论';
     } else {

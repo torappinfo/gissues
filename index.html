@@ -18,7 +18,7 @@
   <link rel="canonical" href="http://gissues.gitee.io">
   <meta name="application-name" content="Gissues">
   <meta name="theme-color" content="#ffffff">
-  <meta property="og:title" content="Gissues">
+  <meta property="og:title" content="测试">
   <script>if (Array.from === undefined) {
   Array.from = function (x) {
     return Array.prototype.slice.call(x);
@@ -76,7 +76,7 @@ if (!window.Promise || !window.fetch) {
 <p>Gissues 加载时，将使用 Gitee issues 搜索 API 根据 url，<strong>路径名</strong>或 <strong>标题</strong> 查找与页面相关的 issues。如果找不到与页面匹配的 issues，即没有评论，当有人首次发表评论时，<a href="https://gitee.com/gissues/Feedback/issues">Gissues</a> 会自动创建一个 issues。</p>
           <h2 id="configuration">配置并获取代码</h2>
           <div class="clear-both">
-            	<h2 id="-">样式表参考</h2>
+            	<h2 id="-">样式表(参考)</h2>
 	<p><code>.Gissues</code> 和 <code>.Gissues-frame</code> 样式表参考</p>
 	<pre><code class="lang-bash">.Gissues {
 	 position: relative;
@@ -112,10 +112,20 @@ if (!window.Promise || !window.fetch) {
       "https://gissues.gitee.io/client.js"
       "http://localhost:4000/client.js"
 
-      issue-term="title"
+
+      src="http://localhost:4000/client.js"
+      repo="gissues/Feedback"
+      branch="main"
+      issue-term="og:title"
+      author="yakeing"
+      label="Gissues"
+      crossorigin="anonymous"
+      theme="github-light"
+
+
     -->
   <section id="Gissues">
-      <script src="http://localhost:4000/client.js" repo="gissues/Feedback" branch="main" author="yakeing" label="label" issue-number="I25840" crossorigin="anonymous" theme="github-light" async="">
+      <script src="http://localhost:4000/client.js" repo="Selected-Activities/gitee-osguide" branch="main" issue-number="I232F0" author="yakeing" crossorigin="anonymous" theme="github-light" async="">
       </script>
   </section>
   <div class="copyright">
