@@ -2228,6 +2228,7 @@ input::-webkit-inner-spin-button {
 }
 .timeline-comment .avatar > img {
   border-radius: 6px;
+  border: 1px #343434 solid;
 }
 .timeline-comment .comment {
   position: relative;
@@ -2652,6 +2653,7 @@ input::-webkit-inner-spin-button {
 }
 .reactions-popover .reaction-button {
   border: 0;
+  padding: 8px 14px;
   -webkit-transition: -webkit-transform 0.15s cubic-bezier(0.2, 0, 0.13, 2);
   transition: -webkit-transform 0.15s cubic-bezier(0.2, 0, 0.13, 2);
   transition: transform 0.15s cubic-bezier(0.2, 0, 0.13, 2);
@@ -2663,6 +2665,11 @@ input::-webkit-inner-spin-button {
   -webkit-transform: scale(1.2);
           transform: scale(1.2);
   color: #4183c4 !important;
+}
+
+.reactions-popover .reaction-img, .reaction-list .reaction-img {
+  height: 16px;
+  width: 16px;
 }
 
 .reaction-name {

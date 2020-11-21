@@ -228,7 +228,7 @@ var _measure = require("./measure");
 
 var NewErrorElement = function () {
   function NewErrorElement() {
-    this.beaudarArticle = "\n  <article class=\"timeline-comment\">\n    <a class=\"avatar\" href=\"https://gitee.com/yakeing\" target=\"_blank\">\n      <img height=\"44\" width=\"44\" src=\"https://gitee.com/gissues/Readme/raw/main/logo/logo_50x50.png\">\n    </a>\n    <div class=\"comment\">\n      <header class=\"comment-header\">\n        <span class=\"comment-meta\">\n          <strong class=\"comment-author\">Gissues</strong> \u7CFB\u7EDF\u6D88\u606F\n        </span>\n      </header>\n      <article id=\"beaudarMsg\" class=\"markdown-body\">\n      </article>\n    </div>\n  </article>\n";
+    this.beaudarArticle = "\n  <article class=\"timeline-comment\">\n    <a class=\"avatar\" href=\"https://gitee.com/yakeing\" target=\"_blank\">\n      <img height=\"44\" width=\"44\" src=\"https://gitee.com/gissues/docs/raw/main/logo/logo_50x50.png\">\n    </a>\n    <div class=\"comment\">\n      <header class=\"comment-header\">\n        <span class=\"comment-meta\">\n          <strong class=\"comment-author\">Gissues</strong> \u7CFB\u7EDF\u6D88\u606F\n        </span>\n      </header>\n      <article id=\"beaudarMsg\" class=\"markdown-body\">\n      </article>\n    </div>\n  </article>\n";
 
     if (document.querySelector('.timeline') === null) {
       this.isTimelineNull = true;
@@ -597,7 +597,7 @@ exports.createIssue = createIssue;
 exports.postComment = postComment;
 exports.toggleReaction = toggleReaction;
 exports.renderMarkdown = renderMarkdown;
-exports.reactionTypes = exports.PAGE_SIZE = void 0;
+exports.reactionTypes = exports.PAGE_SIZE = exports.GITEE_API = void 0;
 
 var _oauth = require("./oauth");
 
@@ -751,12 +751,13 @@ var __generator = void 0 && (void 0).__generator || function (thisArg, body) {
 };
 
 var GITEE_API = 'https://gitee.com/api/v5/';
+exports.GITEE_API = GITEE_API;
 var GITEE_ENCODING__JSON = 'application/json';
 var GITEE_ENCODING__HTML = 'text/html';
-var GITEE_ENCODING__REACTIONS_PREVIEW = 'text/plain, */*';
+var GITEE_ENCODING__PLAIN = 'text/plain';
 var PAGE_SIZE = 25;
 exports.PAGE_SIZE = PAGE_SIZE;
-var reactionTypes = ['+1', '-1', 'laugh', 'hooray', 'confused', 'heart', 'rocket', 'eyes'];
+var reactionTypes = ['+1', '-1', 'smile', 'tada', 'confused', 'heart', 'rocket', 'eyes'];
 exports.reactionTypes = reactionTypes;
 var author;
 var owner;
@@ -773,16 +774,16 @@ function setRepoContext(context) {
 }
 
 function githubRequest(relativeUrl, init) {
+  var relative_url = relativeUrl.indexOf("http") === 0 ? relativeUrl : GITEE_API + relativeUrl;
+  var Url = relativeUrl.indexOf("?") !== -1 ? relative_url + "&access_token=" + _oauth.token.value : relative_url + "?access_token=" + _oauth.token.value;
   init = init || {};
   init.mode = 'cors';
   init.cache = 'no-cache';
   init.referrerPolicy = 'origin';
-  var request = new Request(GITEE_API + relativeUrl, init);
-  request.headers.set('Accept', GITEE_ENCODING__JSON);
+  var request = new Request(Url, init);
+  request.headers.set('Accept', GITEE_ENCODING__PLAIN);
 
-  if (!/^search\//.test(relativeUrl) && _oauth.token.value !== null) {
-    request.headers.set('Authorization', "token " + _oauth.token.value);
-  }
+  if (!/^search\//.test(relativeUrl) && _oauth.token.value !== null) {}
 
   return request;
 }
@@ -940,7 +941,7 @@ function loadIssueByNumber(issueNumber) {
 function commentsRequest(issueNumber, page) {
   var url = "repos/" + owner + "/" + repo + "/issues/" + issueNumber + "/comments?page=" + page + "&per_page=" + PAGE_SIZE;
   var request = githubRequest(url);
-  var accept = GITEE_ENCODING__JSON + "," + GITEE_ENCODING__REACTIONS_PREVIEW;
+  var accept = GITEE_ENCODING__JSON + "," + GITEE_ENCODING__PLAIN;
   request.headers.set('Accept', accept);
   return request;
 }
@@ -979,7 +980,7 @@ function createIssue(issueTerm, documentUrl, title, description, label) {
       body: "# " + title + "\n\n" + description + "\n\n[" + documentUrl + "](" + documentUrl + ")"
     })
   });
-  request.headers.set('Accept', GITEE_ENCODING__REACTIONS_PREVIEW);
+  request.headers.set('Accept', GITEE_ENCODING__PLAIN);
   request.headers.set('Authorization', "token " + _oauth.token.value);
   return fetch(request).then(function (response) {
     if (response === undefined || !response.ok) {
@@ -999,7 +1000,7 @@ function postComment(issueNumber, markdown) {
     method: 'POST',
     body: body
   });
-  var accept = GITEE_ENCODING__JSON + "," + GITEE_ENCODING__REACTIONS_PREVIEW;
+  var accept = GITEE_ENCODING__JSON + "," + GITEE_ENCODING__PLAIN;
   request.headers.set('Accept', accept);
   return githubFetch(request).then(function (response) {
     if (response === undefined || !response.ok) {
@@ -1018,14 +1019,12 @@ function toggleReaction(url, content) {
       switch (_b.label) {
         case 0:
           url = url.replace(GITEE_API, '');
-          body = JSON.stringify({
-            content: content
-          });
+          body = JSON.stringify(content);
           postRequest = githubRequest(url, {
             method: 'POST',
             body: body
           });
-          postRequest.headers.set('Accept', GITEE_ENCODING__REACTIONS_PREVIEW);
+          postRequest.headers.set('Accept', GITEE_ENCODING__PLAIN);
           return [4, githubFetch(postRequest)];
 
         case 1:
@@ -1058,7 +1057,7 @@ function toggleReaction(url, content) {
           deleteRequest = githubRequest("reactions/" + reaction.id, {
             method: 'DELETE'
           });
-          deleteRequest.headers.set('Accept', GITEE_ENCODING__REACTIONS_PREVIEW);
+          deleteRequest.headers.set('Accept', GITEE_ENCODING__PLAIN);
           return [4, githubFetch(deleteRequest)];
 
         case 5:
@@ -1086,6 +1085,8 @@ function renderMarkdown(text) {
     return response.text();
   });
 }
+
+;
 },{"./oauth":"oauth.ts","./encoding":"encoding.ts","./beaudar-api":"beaudar-api.ts","./new-error-element":"new-error-element.ts"}],"time-ago.ts":[function(require,module,exports) {
 "use strict";
 
@@ -1133,7 +1134,7 @@ exports.getReactionHtml = getReactionHtml;
 exports.enableReactions = enableReactions;
 exports.getReactionsMenuHtml = getReactionsMenuHtml;
 exports.getSignInToReactMenuHtml = getSignInToReactMenuHtml;
-exports.reactionEmoji = exports.reactionNames = void 0;
+exports.reactionImgUrl = exports.reactionNames = void 0;
 
 var _github = require("./github");
 
@@ -1289,28 +1290,28 @@ var __generator = void 0 && (void 0).__generator || function (thisArg, body) {
 var reactionNames = {
   '+1': '赞同',
   '-1': '不赞同',
-  'laugh': '笑脸',
-  'hooray': '撒花',
+  'smile': '笑脸',
+  'tada': '撒花',
   'confused': '疑问',
   'heart': '喜欢',
   'rocket': '火箭',
   'eyes': '瞩目'
 };
 exports.reactionNames = reactionNames;
-var reactionEmoji = {
-  '+1': '👍',
-  '-1': '👎',
-  'laugh': '️😄',
-  'hooray': '️🎉',
-  'confused': '😓',
-  'heart': '❤️',
-  'rocket': '🚀',
-  'eyes': '👀'
+var reactionImgUrl = {
+  '+1': 'https://gitee.com/assets/emoji/+1.png',
+  '-1': 'https://gitee.com/assets/emoji/-1.png',
+  'smile': 'https://gitee.com/assets/emoji/smile.png',
+  'tada': 'https://gitee.com/assets/emoji/tada.png',
+  'confused': 'https://gitee.com/assets/emoji/confused.png',
+  'heart': 'https://gitee.com/assets/emoji/heart.png',
+  'rocket': 'https://gitee.com/assets/emoji/rocket.png',
+  'eyes': 'https://gitee.com/assets/emoji/eyes.png'
 };
-exports.reactionEmoji = reactionEmoji;
+exports.reactionImgUrl = reactionImgUrl;
 
-function getReactionHtml(url, reaction, disabled, count) {
-  return "\n  <button\n    reaction\n    type=\"submit\"\n    action=\"javascript:\"\n    formaction=\"" + url + "\"\n    class=\"btn BtnGroup-item btn-outline reaction-button\"\n    value=\"" + reaction + "\"\n    aria-label=\"Toggle " + reactionNames[reaction] + " reaction\"\n    reaction-count=\"" + count + "\"\n    " + (disabled ? 'disabled' : '') + ">\n    " + reactionEmoji[reaction] + "\n  </button>";
+function getReactionHtml(reaction, disabled, count) {
+  return "\n  <button\n    reaction\n    type=\"submit\"\n    action=\"javascript:\"\n    formaction=\"https://gitee.com/" + _pageAttributes.pageAttributes.owner + "/" + _pageAttributes.pageAttributes.repo + "/reactions\"\n    class=\"btn BtnGroup-item btn-outline reaction-button\"\n    value=\"" + reaction + "\"\n    aria-label=\"Toggle " + reactionNames[reaction] + " reaction\"\n    reaction-count=\"" + count + "\"\n    " + (disabled ? 'disabled' : '') + ">\n    <img class=\"reaction-img\" alt=\"" + reaction + "\" src=\"" + reactionImgUrl[reaction] + "\">\n  </button>";
 }
 
 function enableReactions(authenticated) {
@@ -1318,7 +1319,7 @@ function enableReactions(authenticated) {
 
   var submitReaction = function submitReaction(event) {
     return __awaiter(_this, void 0, void 0, function () {
-      var button, parentMenu, url, id, deleted, selector, elements, delta, _i, elements_1, element;
+      var button, parentMenu, url, id, content, deleted, selector, elements, delta, _i, elements_1, element;
 
       return __generator(this, function (_a) {
         switch (_a.label) {
@@ -1348,7 +1349,8 @@ function enableReactions(authenticated) {
 
             url = button.formAction;
             id = button.value;
-            return [4, (0, _github.toggleReaction)(url, id)];
+            content = "text=" + id + "&target_id=3658402&target_type=Note";
+            return [4, (0, _github.toggleReaction)(url, content)];
 
           case 1:
             deleted = _a.sent().deleted;
@@ -1372,12 +1374,12 @@ function enableReactions(authenticated) {
   addEventListener('click', submitReaction, true);
 }
 
-function getReactionsMenuHtml(url, align) {
-  var position = align === 'center' ? 'left: 50%;transform: translateX(-50%)' : 'right:6px';
+function getReactionsMenuHtml(align) {
+  var position = align === 'center' ? 'left: 50%;transform: translateX(-50%)' : 'right:16px';
   var alignmentClass = align === 'center' ? '' : 'Popover-message--top-right';
 
   var getButtonAndSpan = function getButtonAndSpan(id) {
-    return getReactionHtml(url, id, false, 0) + ("<span class=\"reaction-name\" aria-hidden=\"true\">" + reactionNames[id] + "</span>");
+    return getReactionHtml(id, false, 0) + ("<span class=\"reaction-name\" aria-hidden=\"true\">" + reactionNames[id] + "</span>");
   };
 
   return "\n  <details class=\"details-overlay details-popover reactions-popover\">\n    <summary " + (align === 'center' ? 'tabindex="-1"' : '') + ">" + addReactionSvgs + "</summary>\n    <div class=\"Popover\" style=\"" + position + "\">\n      <form class=\"Popover-message " + alignmentClass + " box-shadow-large\" action=\"javascript:\">\n        <span class=\"reaction-name\">\u9009\u62E9\u4F60\u7684\u8868\u60C5\u7B26\u53F7</span>\n        <div class=\"BtnGroup\">\n          " + _github.reactionTypes.slice(0, 4).map(getButtonAndSpan).join('') + "\n        </div>\n        <div class=\"BtnGroup\">\n          " + _github.reactionTypes.slice(4).map(getButtonAndSpan).join('') + "\n        </div>\n      </form>\n    </div>\n  </details>";
@@ -1434,17 +1436,15 @@ var CommentComponent = function () {
         user = comment.user;
     console.log(comment);
     var author_association = user.login === currentUser ? "OWNER" : "NONE";
-    var iconfont_url = "https://api.github.com/reactions";
     var reactions = {
-      "+1": 5,
-      "-1": 1,
-      confused: 1,
-      eyes: 4,
-      heart: 3,
-      hooray: 3,
-      laugh: 4,
-      rocket: 3,
-      total_count: 22
+      '+1': 1,
+      '-1': 2,
+      smile: 3,
+      tada: 4,
+      confused: 4,
+      heart: 5,
+      rocket: 6,
+      eyes: 7
     };
     var html_url = GITEE_URL + "/" + _pageAttributes.pageAttributes.owner + "/" + _pageAttributes.pageAttributes.repo + "/issues/" + target.issue.number + "#note_" + id;
 
@@ -1472,16 +1472,16 @@ var CommentComponent = function () {
 
     if (!locked) {
       if (currentUser) {
-        headerReactionsMenu = (0, _reactions.getReactionsMenuHtml)(iconfont_url, 'right');
-        footerReactionsMenu = (0, _reactions.getReactionsMenuHtml)(iconfont_url, 'center');
+        headerReactionsMenu = (0, _reactions.getReactionsMenuHtml)('right');
+        footerReactionsMenu = (0, _reactions.getReactionsMenuHtml)('center');
       } else {
         headerReactionsMenu = (0, _reactions.getSignInToReactMenuHtml)('right');
         footerReactionsMenu = (0, _reactions.getSignInToReactMenuHtml)('center');
       }
     }
 
-    this.element.innerHTML = "\n      <a class=\"avatar\" href=\"" + user.html_url + "\" target=\"_blank\">\n        <img alt=\"@" + user.login + "\" height=\"44\" width=\"44\" src=\"" + avatar_url + "\">\n      </a>\n      <div class=\"comment\">\n        <header class=\"comment-header\">\n          <span class=\"comment-meta\">\n            <a class=\"text-link comment-author\" href=\"" + user.html_url + "\" target=\"_blank\"><strong>" + user.name + "</strong></a>\n            \u8BC4\u8BBA<a class=\"text-link\" href=\"" + html_url + "\" target=\"_blank\">" + (0, _timeAgo.timeAgo)(Date.now(), new Date(created_at)) + "</a>\n          </span>\n          <div class=\"comment-actions\">\n            " + (association ? "<span class=\"author-association-badge\">" + association + "</span>" : '') + "\n            " + headerReactionsMenu + "\n          </div>\n        </header>\n        <div class=\"markdown-body markdown-body-scrollable\">\n          " + body + "\n        </div>\n        <div class=\"comment-footer\" reaction-count=\"" + reactionCount + "\" reaction-url=\"" + iconfont_url + "\">\n          <form class=\"reaction-list BtnGroup\" action=\"javascript:\">\n            " + _github.reactionTypes.map(function (id) {
-      return (0, _reactions.getReactionHtml)(iconfont_url, id, !currentUser || locked, reactions[id]);
+    this.element.innerHTML = "\n      <a class=\"avatar\" href=\"" + user.html_url + "\" target=\"_blank\">\n        <img alt=\"@" + user.login + "\" height=\"44\" width=\"44\" src=\"" + avatar_url + "\">\n      </a>\n      <div class=\"comment\">\n        <header class=\"comment-header\">\n          <span class=\"comment-meta\">\n            <a class=\"text-link comment-author\" href=\"" + user.html_url + "\" target=\"_blank\"><strong>" + user.name + "</strong></a>\n            \u8BC4\u8BBA<a class=\"text-link\" href=\"" + html_url + "\" target=\"_blank\">" + (0, _timeAgo.timeAgo)(Date.now(), new Date(created_at)) + "</a>\n          </span>\n          <div class=\"comment-actions\">\n            " + (association ? "<span class=\"author-association-badge\">" + association + "</span>" : '') + "\n            " + headerReactionsMenu + "\n          </div>\n        </header>\n        <div class=\"markdown-body markdown-body-scrollable\">\n          " + body + "\n        </div>\n        <div class=\"comment-footer\" reaction-count=\"" + reactionCount + "\" reaction-url=\"******\">\n          <form class=\"reaction-list BtnGroup\" action=\"javascript:\">\n            " + _github.reactionTypes.map(function (id) {
+      return (0, _reactions.getReactionHtml)(id, !currentUser || locked, reactions[id]);
     }).join('') + "\n          </form>\n          " + footerReactionsMenu + "\n        </div>\n      </div>";
     var markdownBody = this.element.querySelector('.markdown-body');
     var emailToggle = markdownBody.querySelector('.email-hidden-toggle a');
@@ -2227,7 +2227,7 @@ function beaudarLoadingStatus(page) {
       if (JSON.parse(page.loading)) {
         beaudarLoading = document.createElement('div');
         beaudarLoading.classList.add('beaudarLoading');
-        beaudarLoading.innerHTML = "\n      <a href=\"https://gissues.gitee.io\" target=\"_blank\">\n        <img width=\"50px\" height=\"50px\" src=\"https://gitee.com/gissues/Readme/raw/main/logo/logo_50x50.png\" title=\"Gissues\">\n      </a>";
+        beaudarLoading.innerHTML = "\n      <a href=\"https://gissues.gitee.io\" target=\"_blank\">\n        <img width=\"50px\" height=\"50px\" src=\"https://gitee.com/gissues/docs/raw/main/logo/logo_50x50.png\" title=\"Gissues\">\n      </a>";
         loadingElement.appendChild(beaudarLoading);
       }
 
