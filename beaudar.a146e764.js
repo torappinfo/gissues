@@ -775,15 +775,22 @@ function setRepoContext(context) {
 
 function githubRequest(relativeUrl, init) {
   var relative_url = relativeUrl.indexOf("http") === 0 ? relativeUrl : GITEE_API + relativeUrl;
-  var Url = relativeUrl.indexOf("?") !== -1 ? relative_url + "&access_token=" + _oauth.token.value : relative_url + "?access_token=" + _oauth.token.value;
+
+  if (relativeUrl.indexOf("markdown") !== -1 || relativeUrl.indexOf("repos") !== -1) {
+    var Url = relative_url;
+  } else {
+    var Url = relativeUrl.indexOf("?") !== -1 ? relative_url + "&access_token=" + _oauth.token.value : relative_url + "?access_token=" + _oauth.token.value;
+  }
+
   init = init || {};
   init.mode = 'cors';
   init.cache = 'no-cache';
-  init.referrerPolicy = 'origin';
   var request = new Request(Url, init);
   request.headers.set('Accept', GITEE_ENCODING__PLAIN);
 
-  if (!/^search\//.test(relativeUrl) && _oauth.token.value !== null) {}
+  if (!/^search\//.test(relativeUrl) && _oauth.token.value !== null) {
+    request.headers.set('Authorization', "token " + _oauth.token.value);
+  }
 
   return request;
 }
@@ -994,14 +1001,14 @@ function createIssue(issueTerm, documentUrl, title, description, label) {
 function postComment(issueNumber, markdown) {
   var url = "repos/" + owner + "/" + repo + "/issues/" + issueNumber + "/comments";
   var body = JSON.stringify({
+    access_token: _oauth.token.value,
     body: markdown
   });
   var request = githubRequest(url, {
     method: 'POST',
     body: body
   });
-  var accept = GITEE_ENCODING__JSON + "," + GITEE_ENCODING__PLAIN;
-  request.headers.set('Accept', accept);
+  request.headers.set('Accept', GITEE_ENCODING__PLAIN);
   return githubFetch(request).then(function (response) {
     if (response === undefined || !response.ok) {
       throw new Error("\u53D1\u5E03\u8BC4\u8BBA\u65F6\u51FA\u9519");
@@ -1074,9 +1081,8 @@ function toggleReaction(url, content) {
 
 function renderMarkdown(text) {
   var body = JSON.stringify({
-    text: text,
-    mode: 'gfm',
-    context: owner + "/" + repo
+    access_token: "" + _oauth.token.value,
+    text: text
   });
   return githubFetch(githubRequest('markdown', {
     method: 'POST',
