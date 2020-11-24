@@ -765,15 +765,6 @@ var owner;
 var repo;
 var label;
 var branch;
-
-function setRepoContext(context) {
-  author = context.author;
-  owner = context.owner;
-  repo = context.repo;
-  label = context.label;
-  branch = context.branch;
-}
-
 var rateLimit = {
   standard: {
     limit: Number.MAX_VALUE,
@@ -786,6 +777,14 @@ var rateLimit = {
     reset: 0
   }
 };
+
+function setRepoContext(context) {
+  author = context.author;
+  owner = context.owner;
+  repo = context.repo;
+  label = context.label;
+  branch = context.branch;
+}
 
 function githubRequest(relativeUrl, Auth, init) {
   var Url = relativeUrl.indexOf("http") === 0 ? relativeUrl : GITEE_API + relativeUrl;
@@ -976,12 +975,16 @@ function loadUser() {
 }
 
 function createIssue(issueTerm, documentUrl, title, description, label) {
-  var url = _beaudarApi.GISSUES_API + "/repos/" + owner + "/" + repo + "/issues" + (label ? "?label=" + encodeURIComponent(label) : '');
-  var request = githubRequest(url, null, {
+  var url = _beaudarApi.GISSUES_API + "/repos/" + owner + "/issues";
+  var request = githubRequest(url, 'query', {
     method: 'POST',
     body: JSON.stringify({
-      title: issueTerm,
-      body: "# " + title + "\n\n" + description + "\n\n[" + documentUrl + "](" + documentUrl + ")"
+      access_token: _oauth.token.value,
+      assignee: author,
+      body: description + " [" + documentUrl + "](" + documentUrl + ") # " + title,
+      labels: label,
+      repo: repo,
+      title: issueTerm
     })
   });
   return githubFetch(request).then(function (response) {
@@ -2505,7 +2508,7 @@ function bootstrap() {
 
                   case 4:
                     comment = _a.sent();
-                    timeline.insertComment(comment, '000', true);
+                    timeline.insertComment(comment, issue.user.login, true);
                     newCommentComponent.clear();
                     return [3, 6];
 
