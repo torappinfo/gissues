@@ -752,9 +752,9 @@ var __generator = void 0 && (void 0).__generator || function (thisArg, body) {
 
 var GITEE_API = 'https://gitee.com/api/v5/';
 exports.GITEE_API = GITEE_API;
-var GITEE_ENCODING__JSON = 'application/json';
 var GITEE_ENCODING__HTML = 'text/html';
 var GITEE_ENCODING__PLAIN = 'text/plain';
+var GITEE_ENCODING__JSON = 'application/json';
 var GITEE_ENCODING__FORM = 'application/x-www-form-urlencoded';
 var PAGE_SIZE = 25;
 exports.PAGE_SIZE = PAGE_SIZE;
@@ -774,29 +774,6 @@ function setRepoContext(context) {
   branch = context.branch;
 }
 
-function githubRequest(relativeUrl, init, Auth) {
-  var relative_url = relativeUrl.indexOf("http") === 0 ? relativeUrl : GITEE_API + relativeUrl;
-
-  if ('query' == Auth && _oauth.token.value !== null) {
-    var Url = relativeUrl.indexOf("?") !== -1 ? relative_url + "&access_token=" + _oauth.token.value : relative_url + "?access_token=" + _oauth.token.value;
-  } else {
-    var Url = relative_url;
-  }
-
-  init = init || {};
-  init.mode = 'cors';
-  init.cache = 'no-cache';
-  init.referrerPolicy = 'unsafe-url';
-  var request = new Request(Url, init);
-  request.headers.set('Accept', GITEE_ENCODING__JSON);
-
-  if ('headers' == Auth && _oauth.token.value !== null) {
-    request.headers.set('Authorization', "token " + _oauth.token.value);
-  }
-
-  return request;
-}
-
 var rateLimit = {
   standard: {
     limit: Number.MAX_VALUE,
@@ -809,6 +786,56 @@ var rateLimit = {
     reset: 0
   }
 };
+
+function githubRequest(relativeUrl, Auth, init) {
+  var Url = relativeUrl.indexOf("http") === 0 ? relativeUrl : GITEE_API + relativeUrl;
+
+  if ('query' == Auth && _oauth.token.value !== null) {
+    Url = relativeUrl.indexOf("?") !== -1 ? Url + "&access_token=" + _oauth.token.value : Url + "?access_token=" + _oauth.token.value;
+  }
+
+  var RequestHeaders = new Headers();
+  RequestHeaders.append('Content-Type', GITEE_ENCODING__JSON + ';charset=UTF-8');
+  init = init || {};
+  init.mode = 'cors';
+  init.headers = RequestHeaders;
+  init.cache = 'no-cache';
+  init.referrer = '/gitee.com/api/v5/swagger';
+  init.referrerPolicy = 'unsafe-url';
+  var request = new Request(Url, init);
+  request.headers.set('Accept', GITEE_ENCODING__PLAIN);
+
+  if ('headers' == Auth && _oauth.token.value !== null) {
+    request.headers.set('Authorization', "token " + _oauth.token.value);
+  }
+
+  return request;
+}
+
+function githubFetch(request) {
+  return fetch(request).then(function (response) {
+    if (response.status === 401) {
+      _oauth.token.value = null;
+    }
+
+    if (response.status === 403) {
+      response.json().then(function (data) {
+        if (data.message === 'Resource not accessible by integration') {
+          window.dispatchEvent(new CustomEvent('not-installed'));
+        }
+      });
+    }
+
+    processRateLimit(response);
+
+    if (request.method === 'GET' && [401, 403].indexOf(response.status) !== -1 && request.headers.has('Authorization')) {
+      request.headers.delete('Authorization');
+      return githubFetch(request);
+    }
+
+    return response;
+  });
+}
 
 function processRateLimit(response) {
   var limit = response.headers.get('X-RateLimit-Limit');
@@ -845,37 +872,12 @@ function readRelNext(response) {
   return +match[1];
 }
 
-function githubFetch(request) {
-  return fetch(request).then(function (response) {
-    if (response.status === 401) {
-      _oauth.token.value = null;
-    }
-
-    if (response.status === 403) {
-      response.json().then(function (data) {
-        if (data.message === 'Resource not accessible by integration') {
-          window.dispatchEvent(new CustomEvent('not-installed'));
-        }
-      });
-    }
-
-    processRateLimit(response);
-
-    if (request.method === 'GET' && [401, 403].indexOf(response.status) !== -1 && request.headers.has('Authorization')) {
-      request.headers.delete('Authorization');
-      return githubFetch(request);
-    }
-
-    return response;
-  });
-}
-
 function loadJsonFile(path, html) {
   if (html === void 0) {
     html = false;
   }
 
-  var request = githubRequest("http://localhost:4000/" + path, null, 'query');
+  var request = githubRequest("repos/" + owner + "/" + repo + "/contents/" + path + "?ref=" + branch, 'query');
 
   if (html) {
     request.headers.set('accept', GITEE_ENCODING__HTML);
@@ -905,7 +907,7 @@ function loadJsonFile(path, html) {
 }
 
 function loadIssueByTerm(term) {
-  var request = githubRequest("http://localhost:4000/issues.json");
+  var request = githubRequest("search/issues?q=" + encodeURIComponent(term) + "&repo=" + owner + "%2F" + repo + "&author=" + author + "&label=" + label + "&sort=updated_at&order=asc", 'query');
   return githubFetch(request).then(function (response) {
     if (response === undefined || !response.ok) {
       throw new Error('搜索 Issues 失败。');
@@ -947,16 +949,9 @@ function loadIssueByNumber(issueNumber) {
   });
 }
 
-function commentsRequest(issueNumber, page) {
-  var url = "http://localhost:4000/comments.json";
-  var request = githubRequest(url);
-  var accept = GITEE_ENCODING__JSON + "," + GITEE_ENCODING__PLAIN;
-  request.headers.set('Accept', accept);
-  return request;
-}
-
 function loadCommentsPage(issueNumber, page) {
-  var request = commentsRequest(issueNumber, page);
+  var url = "repos/" + owner + "/" + repo + "/issues/" + issueNumber + "/comments?page=" + page + "&per_page=" + PAGE_SIZE;
+  var request = githubRequest(url, 'query');
   return githubFetch(request).then(function (response) {
     if (response === undefined || !response.ok) {
       throw new Error("\u63D0\u53D6\u8BC4\u8BBA\u65F6\u51FA\u9519\u3002");
@@ -971,7 +966,7 @@ function loadUser() {
     return Promise.resolve(null);
   }
 
-  return githubFetch(githubRequest('user', null, 'query')).then(function (response) {
+  return githubFetch(githubRequest('user', 'query')).then(function (response) {
     if (response.ok) {
       return response.json();
     }
@@ -982,7 +977,7 @@ function loadUser() {
 
 function createIssue(issueTerm, documentUrl, title, description, label) {
   var url = _beaudarApi.GISSUES_API + "/repos/" + owner + "/" + repo + "/issues" + (label ? "?label=" + encodeURIComponent(label) : '');
-  var request = githubRequest(url, {}, {
+  var request = githubRequest(url, null, {
     method: 'POST',
     body: JSON.stringify({
       title: issueTerm,
@@ -1000,15 +995,13 @@ function createIssue(issueTerm, documentUrl, title, description, label) {
 
 function postComment(issueNumber, markdown) {
   var url = "repos/" + owner + "/" + repo + "/issues/" + issueNumber + "/comments";
-  var body = JSON.stringify({
-    access_token: _oauth.token.value,
-    body: markdown
-  });
-  var request = githubRequest(url, {
+  var request = githubRequest(url, 'query', {
     method: 'POST',
-    body: body
+    body: JSON.stringify({
+      access_token: _oauth.token.value,
+      body: markdown
+    })
   });
-  request.headers.set('Accept', GITEE_ENCODING__JSON);
   return githubFetch(request).then(function (response) {
     if (response === undefined || !response.ok) {
       throw new Error("\u53D1\u5E03\u8BC4\u8BBA\u65F6\u51FA\u9519");
@@ -1026,11 +1019,10 @@ function toggleReaction(url, content) {
       switch (_b.label) {
         case 0:
           body = JSON.stringify(content);
-          postRequest = githubRequest(url, {
+          postRequest = githubRequest(url, null, {
             method: 'POST',
             body: body
           });
-          postRequest.headers.set('Accept', GITEE_ENCODING__PLAIN);
           return [4, githubFetch(postRequest)];
 
         case 1:
@@ -1060,10 +1052,9 @@ function toggleReaction(url, content) {
             throw new Error('预期的“ 201 响应已创建”或“ 200 响应已存在”');
           }
 
-          deleteRequest = githubRequest("reactions/" + reaction.id, {
+          deleteRequest = githubRequest("reactions/" + reaction.id, null, {
             method: 'DELETE'
           });
-          deleteRequest.headers.set('Accept', GITEE_ENCODING__PLAIN);
           return [4, githubFetch(deleteRequest)];
 
         case 5:
@@ -1079,19 +1070,16 @@ function toggleReaction(url, content) {
 }
 
 function renderMarkdown(text) {
-  var body = JSON.stringify({
-    access_token: "" + _oauth.token.value,
-    text: text
-  });
-  return githubFetch(githubRequest('markdown', {
+  return githubFetch(githubRequest('markdown', 'query', {
     method: 'POST',
-    body: body
+    body: JSON.stringify({
+      access_token: "" + _oauth.token.value,
+      text: text
+    })
   })).then(function (response) {
     return response.text();
   });
 }
-
-;
 },{"./oauth":"oauth.ts","./encoding":"encoding.ts","./beaudar-api":"beaudar-api.ts","./new-error-element":"new-error-element.ts"}],"time-ago.ts":[function(require,module,exports) {
 "use strict";
 
@@ -1354,7 +1342,11 @@ function enableReactions(authenticated) {
 
             url = button.formAction;
             id = button.value;
-            content = "text=" + id + "&target_id=3658402&target_type=Note";
+            content = {
+              text: id,
+              target_id: 3658402,
+              target_type: 'Note'
+            };
             return [4, (0, _github.toggleReaction)(url, content)];
 
           case 1:
@@ -1416,6 +1408,8 @@ var _measure = require("./measure");
 
 var _reactions = require("./reactions");
 
+var anonymousAvatar = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 14 16\" version=\"1.1\"><path fill=\"rgb(179,179,179)\" fill-rule=\"evenodd\" d=\"M8 10.5L9 14H5l1-3.5L5.25 9h3.5L8 10.5zM10 6H4L2 7h10l-2-1zM9 2L7 3 5 2 4 5h6L9 2zm4.03 7.75L10 9l1 2-2 3h3.22c.45 0 .86-.31.97-.75l.56-2.28c.14-.53-.19-1.08-.72-1.22zM4 9l-3.03.75c-.53.14-.86.69-.72 1.22l.56 2.28c.11.44.52.75.97.75H5l-2-3 1-2z\"></path></svg>";
+var anonymousAvatarUrl = "data:image/svg+xml;base64," + btoa(anonymousAvatar);
 var GITEE_URL = 'https://gitee.com';
 var avatarArgs = '!avatar60';
 var displayAssociations = {
@@ -1453,8 +1447,8 @@ var CommentComponent = function () {
     };
     var html_url = GITEE_URL + "/" + _pageAttributes.pageAttributes.owner + "/" + _pageAttributes.pageAttributes.repo + "/issues/" + target.issue.number + "#note_" + id;
 
-    if ("https://gitee.com/assets/no_portrait.png" == user.avatar_url) {
-      var avatar_url = user.avatar_url;
+    if (user.avatar_url.indexOf("no_portrait.png") !== -1) {
+      var avatar_url = anonymousAvatarUrl;
     } else {
       var avatar_url = "" + user.avatar_url + avatarArgs;
     }
@@ -1862,6 +1856,7 @@ var __generator = void 0 && (void 0).__generator || function (thisArg, body) {
 var anonymousAvatar = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 14 16\" version=\"1.1\"><path fill=\"rgb(179,179,179)\" fill-rule=\"evenodd\" d=\"M8 10.5L9 14H5l1-3.5L5.25 9h3.5L8 10.5zM10 6H4L2 7h10l-2-1zM9 2L7 3 5 2 4 5h6L9 2zm4.03 7.75L10 9l1 2-2 3h3.22c.45 0 .86-.31.97-.75l.56-2.28c.14-.53-.19-1.08-.72-1.22zM4 9l-3.03.75c-.53.14-.86.69-.72 1.22l.56 2.28c.11.44.52.75.97.75H5l-2-3 1-2z\"></path></svg>";
 var anonymousAvatarUrl = "data:image/svg+xml;base64," + btoa(anonymousAvatar);
 var nothingToPreview = '没有可预览的内容';
+var avatarArgs = '!avatar60';
 
 var NewCommentComponent = function () {
   function NewCommentComponent(user, submit) {
@@ -1874,28 +1869,28 @@ var NewCommentComponent = function () {
 
     this.handleInput = function () {
       (0, _repoConfig.getRepoConfig)();
-      var text = _this.textarea.value;
-      var isWhitespace = /^\s*$/.test(text);
-      _this.submitButton.disabled = isWhitespace;
 
       if (_this.textarea.scrollHeight < 450 && _this.textarea.offsetHeight < _this.textarea.scrollHeight) {
         _this.textarea.style.height = _this.textarea.scrollHeight + "px";
         (0, _measure.scheduleMeasure)();
       }
+    };
 
+    this.previewHTML = function () {
+      var text = _this.textarea.value;
+      var isWhitespace = /^\s*$/.test(text);
+      _this.submitButton.disabled = isWhitespace;
       clearTimeout(_this.renderTimeout);
 
       if (isWhitespace) {
         _this.preview.textContent = nothingToPreview;
       } else {
         _this.preview.textContent = '加载预览中...';
-        _this.renderTimeout = setTimeout(function () {
-          return (0, _github.renderMarkdown)(text).then(function (html) {
-            return _this.preview.innerHTML = html;
-          }).then(function () {
-            return (0, _commentComponent.processRenderedMarkdown)(_this.preview);
-          }).then(_measure.scheduleMeasure);
-        }, 500);
+        _this.renderTimeout = (0, _github.renderMarkdown)(text).then(function (html) {
+          return _this.preview.innerHTML = html;
+        }).then(function () {
+          return (0, _commentComponent.processRenderedMarkdown)(_this.preview);
+        }).then(_measure.scheduleMeasure);
       }
     };
 
@@ -1970,12 +1965,14 @@ var NewCommentComponent = function () {
     this.avatar = this.avatarAnchor.firstElementChild;
     this.form = this.avatarAnchor.nextElementSibling;
     this.textarea = this.form.firstElementChild.nextElementSibling.firstElementChild;
+    this.previewButton = this.form.firstElementChild.firstElementChild.lastElementChild;
     this.preview = this.form.firstElementChild.nextElementSibling.lastElementChild;
     this.signInAnchor = this.form.lastElementChild.lastElementChild;
     this.submitButton = this.signInAnchor.previousElementSibling;
     this.setUser(user);
     this.submitButton.disabled = true;
     this.textarea.addEventListener('input', this.handleInput);
+    this.previewButton.addEventListener('click', this.previewHTML);
     this.form.addEventListener('submit', this.handleSubmit);
     this.form.addEventListener('click', this.handleClick);
     this.form.addEventListener('keydown', this.handleKeyDown);
@@ -1991,10 +1988,10 @@ var NewCommentComponent = function () {
       this.avatarAnchor.href = user.html_url;
       this.avatar.alt = '@' + user.login;
 
-      if (user.avatar_url.indexOf("/assets/no_portrait.png") !== -1) {
-        this.avatar.src = user.avatar_url + "!avatar60";
-      } else {
+      if (user.avatar_url.indexOf("no_portrait.png") !== -1) {
         this.avatar.src = anonymousAvatarUrl;
+      } else {
+        this.avatar.src = "" + user.avatar_url + avatarArgs;
       }
 
       this.textarea.disabled = false;
