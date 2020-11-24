@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <title>Gissues</title>
+  <meta name="description" content="使用 Gitee issue 的轻量级评论插件">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://gitee.com">
+  <link rel="preconnect" href="https://gissues.gitee.io">
+  <link id="theme-stylesheet" rel="stylesheet" href="https://gissues.gitee.io/stylesheets/themes/github-light/index.css">
+  <!-- https://gissues.gitee.io/stylesheets/themes/github-light/index.css -->
+  <meta name="referrer" content="unsafe-url">
+  <meta name="Access-Control-Allow-Origin" content="oauth.applinzi.com">
+  <meta name="Access-Control-Allow-Credentials" content="true">
+  <link rel="icon" type="image/png" href="/favicon.2e70f008.png">
+  <link rel="canonical" href="https://gissues.gitee.io">
+  <meta name="application-name" content="Gissues">
+  <meta name="theme-color" content="#ffffff">
+  <meta property="og:title" content="测试">
+  <script>if (Array.from === undefined) {
+  Array.from = function (x) {
+    return Array.prototype.slice.call(x);
+  };
+}
+
+if (!window.Promise || !window.fetch) {
+  document.write('<script src="https://cdn.jsdelivr.net/bluebird/3.5.0/bluebird.min.js"  type="text/javascript"><\/script>', '<script src="https://cdn.jsdelivr.net/gh/github/fetch@2.0.3/fetch.min.js"  type="text/javascript"><\/script>', '<script src="https://cdn.jsdelivr.net/gh/eligrey/classList.js@1.1.20170427/classList.min.js"  type="text/javascript"><\/script>', '<script src="https://cdn.jsdelivr.net/npm/custom-event-polyfill@0.3.0/custom-event-polyfill.min.js" integrity="sha384-LA1yvfV5pKonJnGIRvMu236XXaEJvI11iV52RIkwsE4QAWpgge1OcxfBHk/0t3UP" crossorigin="anonymous"><\/script>');
+}</script>
+</head>
+
+<body>
+  <canvas id="confetti"> </canvas>
+  <main class="timeline">
+    <article class="timeline-comment">
+      <a class="avatar" href="https://gissues.gitee.io" target="_blank">
+        <img height="44" width="44" src="/logo.de01bb0e.png">
+      </a>
+      <div class="comment">
+        <header class="comment-header">
+          <span class="comment-meta">
+            <strong class="comment-author">Gissues</strong>
+          </span>
+        </header>
+        <article class="markdown-body">
+          <h3 id="gitee-issues-">Gitee issues 评论插件</h3>
+<blockquote>
+<p>Gissues 名称源于 Gitee issues 的简写，是 <a href="https://github.com/utterance">Utterances</a> 和 <a href="https://github.com/beaudar">beaudar</a> 的结合体。</p>
+</blockquote>
+<ul>
+<li>项目开源 <a href="https://gitee.com/gissues">Gissues</a></li>
+<li>没有追踪，没有广告，永久免费。</li>
+<li>不保留数据，所有数据保存在用户 Gitee issues 中。</li>
+<li>有源于 <a href="https://primer.style/">Github primer</a> 的多个主题。</li>
+<li>轻量化，没有字体下载，没有 JS 框架加载，没有 polyfills。</li>
+<li>非常稳定，国内服务器。</li>
+</ul>
+<h4 id="-utterances-gissues-">与 Utterances 比较，Gissues 增加了什么？</h4>
+<ul>
+<li>中文界面，拉近距离增加评论友好性。 是 Utterances 的中文版。</li>
+<li>完整头像，移动端与桌面端一致显示。 Utterances 在页面宽度缩小后会隐藏头像。</li>
+<li>身份标识，在任何情况下都不会换行。 Utterances 在页面宽度缩小后身份标识会换行。</li>
+<li>评论时间，缩小至与身份标识相同大。 针对中文，优化显示。</li>
+<li>名称显示，评论者名称放大增加辨识。 针对中文，优化显示。</li>
+<li>链接打开，从新标签页打开符合习惯。 新标签页打开链接，才是操作友好、符合习惯的。</li>
+<li>错误信息，使用对话框形式友好呈现。 Utterances 的错误信息只打印在浏览器控制台。</li>
+<li>评论头像，增加可以使用 Tab 键选中。 头像可以跳转到用户 Gitee，Utterances 头像设置为了不可选中，无障碍操作不友好。</li>
+<li>加载状态，默认加载状态可配置去除。 Utterances 没有加载中的状态，配置 <code>loading=&quot;false&quot;</code> 可以去除加载状态。</li>
+<li>移除来源，点击加载图标跳转至主页。 移除了 <code>powered by utteranc.es</code> 的超链接。</li>
+<li>刷新页面，出现错误异常可进行刷新。 国内服务器 <a href="https://gitee.com">Gitee.com</a> 非常稳定。</li>
+<li>保持主题，刷新页面时主题将会保持。 状态保持在浏览器 <code>sessionStorage</code> 中关闭页面会重新加载。</li>
+<li>分支选项，增加仓库分支项用于校验。 获取公开库指定分支代码，校验 gissues.json 配置，默认 &#39;master&#39;。</li>
+</ul>
+<h4 id="gissues-">Gissues 是如何工作的？</h4>
+<p>Gissues 加载时，将使用 Gitee issues 搜索 API 根据 url，<strong>路径名</strong>或 <strong>标题</strong> 查找与页面相关的 issues。如果找不到与页面匹配的 issues，即没有评论，当有人首次发表评论时，<a href="https://gitee.com/gissues/Feedback/issues">Gissues</a> 会自动创建一个 issues。</p>
+          <h2 id="configuration">配置并获取代码</h2>
+          <div class="clear-both">
+            	<h2 id="-">样式表(参考)</h2>
+	<p><code>.Gissues</code> 和 <code>.Gissues-frame</code> 样式表参考</p>
+	<pre><code class="lang-bash">.Gissues {
+	 position: relative;
+	 box-sizing: border-box;
+	 width: 100%;
+	 max-width: 760px;
+	 margin-left: auto;
+	 margin-right: auto;
+	}
+	</code></pre>
+	<pre><code class="lang-bash">.Gissues-frame {
+	 position: absolute;
+	 left: 0;
+	 right: 0;
+	 width: 1px;
+	 min-width: 100%;
+	 max-width: 100%;
+	 height: 100%;
+	 border: 0;
+	}
+	</code></pre>
+          </div>
+        </article>
+      </div>
+    </article>
+  </main>
+
+  <script src="/src.77de5100.js"></script>
+  <script src="/confetti.93607243.js"></script>
+
+
+    <!--
+      "https://gissues.gitee.io/client.js"
+      "http://localhost:4000/client.js"
+    -->
+  <section id="Gissues">
+      <script src="http://gissues.gitee.io/client.js" repo="gissues/Feedback" branch="main" issue-term="og:title" author="yakeing" label="Gissues" crossorigin="anonymous" theme="github-light" async="">
+      </script>
+  </section>
+  <div class="copyright">
+    &copy; 2020 Gissues By <b>Yakeing</b><br>
+    TypeScript and Gitee Pages<br>
+    粤ICP备12009483号</div>
+</body>
+</html>
