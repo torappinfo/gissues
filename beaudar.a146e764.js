@@ -906,7 +906,7 @@ function loadJsonFile(path, html) {
 }
 
 function loadIssueByTerm(term) {
-  var request = githubRequest("search/issues?q=" + encodeURIComponent(term) + "&repo=" + owner + "%2F" + repo + "&author=" + author + "&label=" + label + "&sort=updated_at&order=asc", 'query');
+  var request = githubRequest("search/issues?q=" + encodeURIComponent(term) + "&repo=" + owner + "%2F" + repo + "&author=" + author + "&label=" + label + "&sort=updated_at&order=asc");
   return githubFetch(request).then(function (response) {
     if (response === undefined || !response.ok) {
       throw new Error('搜索 Issues 失败。');
@@ -950,7 +950,7 @@ function loadIssueByNumber(issueNumber) {
 
 function loadCommentsPage(issueNumber, page) {
   var url = "repos/" + owner + "/" + repo + "/issues/" + issueNumber + "/comments?page=" + page + "&per_page=" + PAGE_SIZE;
-  var request = githubRequest(url, 'query');
+  var request = githubRequest(url);
   return githubFetch(request).then(function (response) {
     if (response === undefined || !response.ok) {
       throw new Error("\u63D0\u53D6\u8BC4\u8BBA\u65F6\u51FA\u9519\u3002");
@@ -980,11 +980,11 @@ function createIssue(issueTerm, documentUrl, title, description, label) {
     method: 'POST',
     body: JSON.stringify({
       access_token: _oauth.token.value,
-      assignee: author,
-      body: description + " [" + documentUrl + "](" + documentUrl + ") # " + title,
-      labels: label,
       repo: repo,
-      title: issueTerm
+      title: issueTerm,
+      body: description + " [" + documentUrl + "](" + documentUrl + ") # " + title,
+      assignee: author,
+      labels: label
     })
   });
   return githubFetch(request).then(function (response) {
@@ -1438,7 +1438,7 @@ var CommentComponent = function () {
         updated_at = comment.updated_at,
         user = comment.user;
     var author_association = CommentAuthor === user.login ? "OWNER" : "NONE";
-    var reactions = {
+    var reactions_22222222222222222 = {
       '+1': 1,
       '-1': 2,
       smile: 3,
@@ -1447,6 +1447,9 @@ var CommentComponent = function () {
       heart: 5,
       rocket: 6,
       eyes: 7
+    };
+    var reactions = {
+      '+1': 1
     };
     var html_url = GITEE_URL + "/" + _pageAttributes.pageAttributes.owner + "/" + _pageAttributes.pageAttributes.repo + "/issues/" + target.issue.number + "#note_" + id;
 
