@@ -603,8 +603,6 @@ var _oauth = require("./oauth");
 
 var _encoding = require("./encoding");
 
-var _beaudarApi = require("./beaudar-api");
-
 var _newErrorElement = require("./new-error-element");
 
 var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
@@ -799,7 +797,7 @@ function githubRequest(relativeUrl, Auth, init) {
   init.mode = 'cors';
   init.headers = RequestHeaders;
   init.cache = 'no-cache';
-  init.referrer = '/gitee.com/api/v5/swagger';
+  init.referrer = '/api/v5/swagger';
   init.referrerPolicy = 'unsafe-url';
   var request = new Request(Url, init);
   request.headers.set('Accept', GITEE_ENCODING__PLAIN);
@@ -906,7 +904,7 @@ function loadJsonFile(path, html) {
 }
 
 function loadIssueByTerm(term) {
-  var request = githubRequest("search/issues?q=" + encodeURIComponent(term) + "&repo=" + owner + "%2F" + repo + "&author=" + author + "&label=" + label + "&sort=updated_at&order=asc");
+  var request = githubRequest("search/issues?q=" + encodeURIComponent(term) + "&repo=" + owner + "%2F" + repo + "&author=" + author + "&label=" + label + "&sort=updated_at&order=asc", 'query');
   return githubFetch(request).then(function (response) {
     if (response === undefined || !response.ok) {
       throw new Error('搜索 Issues 失败。');
@@ -938,7 +936,7 @@ function loadIssueByTerm(term) {
 }
 
 function loadIssueByNumber(issueNumber) {
-  var request = githubRequest("repos/" + owner + "/" + repo + "/issues/" + issueNumber);
+  var request = githubRequest("repos/" + owner + "/" + repo + "/issues/" + issueNumber, 'query');
   return githubFetch(request).then(function (response) {
     if (response === undefined || !response.ok) {
       throw new Error("\u901A\u8FC7 Issue \u7F16\u53F7\u63D0\u53D6\u8BC4\u8BBA\u65F6\u51FA\u9519");
@@ -950,7 +948,7 @@ function loadIssueByNumber(issueNumber) {
 
 function loadCommentsPage(issueNumber, page) {
   var url = "repos/" + owner + "/" + repo + "/issues/" + issueNumber + "/comments?page=" + page + "&per_page=" + PAGE_SIZE;
-  var request = githubRequest(url);
+  var request = githubRequest(url, 'query');
   return githubFetch(request).then(function (response) {
     if (response === undefined || !response.ok) {
       throw new Error("\u63D0\u53D6\u8BC4\u8BBA\u65F6\u51FA\u9519\u3002");
@@ -975,14 +973,14 @@ function loadUser() {
 }
 
 function createIssue(issueTerm, documentUrl, title, description, label) {
-  var url = _beaudarApi.GISSUES_API + "/repos/" + owner + "/issues";
+  var url = "/repos/" + owner + "/issues";
   var request = githubRequest(url, 'query', {
     method: 'POST',
     body: JSON.stringify({
       access_token: _oauth.token.value,
       repo: repo,
       title: issueTerm,
-      body: description + " [" + documentUrl + "](" + documentUrl + ") # " + title,
+      body: description + " #" + title + "\n\n [" + documentUrl + "](" + documentUrl + ")",
       assignee: author,
       labels: label
     })
@@ -1076,14 +1074,14 @@ function renderMarkdown(text) {
   return githubFetch(githubRequest('markdown', 'query', {
     method: 'POST',
     body: JSON.stringify({
-      access_token: "" + _oauth.token.value,
+      access_token: _oauth.token.value,
       text: text
     })
   })).then(function (response) {
     return response.text();
   });
 }
-},{"./oauth":"oauth.ts","./encoding":"encoding.ts","./beaudar-api":"beaudar-api.ts","./new-error-element":"new-error-element.ts"}],"time-ago.ts":[function(require,module,exports) {
+},{"./oauth":"oauth.ts","./encoding":"encoding.ts","./new-error-element":"new-error-element.ts"}],"time-ago.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1307,6 +1305,7 @@ var reactionImgUrl = {
 exports.reactionImgUrl = reactionImgUrl;
 
 function getReactionHtml(reaction, disabled, count) {
+  count = count && !isNaN(count) ? count : 0;
   return "\n  <button\n    reaction\n    type=\"submit\"\n    action=\"javascript:\"\n    formaction=\"https://gitee.com/" + _pageAttributes.pageAttributes.owner + "/" + _pageAttributes.pageAttributes.repo + "/reactions\"\n    class=\"btn BtnGroup-item btn-outline reaction-button\"\n    value=\"" + reaction + "\"\n    aria-label=\"Toggle " + reactionNames[reaction] + " reaction\"\n    reaction-count=\"" + count + "\"\n    " + (disabled ? 'disabled' : '') + ">\n    <img class=\"reaction-img\" alt=\"" + reaction + "\" src=\"" + reactionImgUrl[reaction] + "\">\n  </button>";
 }
 
@@ -1438,6 +1437,9 @@ var CommentComponent = function () {
         updated_at = comment.updated_at,
         user = comment.user;
     var author_association = CommentAuthor === user.login ? "OWNER" : "NONE";
+    var reactions = {
+      '+1': 1
+    };
     var reactions_22222222222222222 = {
       '+1': 1,
       '-1': 2,
@@ -1447,9 +1449,6 @@ var CommentComponent = function () {
       heart: 5,
       rocket: 6,
       eyes: 7
-    };
-    var reactions = {
-      '+1': 1
     };
     var html_url = GITEE_URL + "/" + _pageAttributes.pageAttributes.owner + "/" + _pageAttributes.pageAttributes.repo + "/issues/" + target.issue.number + "#note_" + id;
 
@@ -1485,7 +1484,7 @@ var CommentComponent = function () {
       }
     }
 
-    this.element.innerHTML = "\n      <a class=\"avatar\" href=\"" + user.html_url + "\" target=\"_blank\">\n        <img alt=\"@" + user.login + "\" height=\"44\" width=\"44\" src=\"" + avatar_url + "\">\n      </a>\n      <div class=\"comment\">\n        <header class=\"comment-header\">\n          <span class=\"comment-meta\">\n            <a class=\"text-link comment-author\" href=\"" + user.html_url + "\" target=\"_blank\"><strong>" + user.name + "</strong></a>\n            \u8BC4\u8BBA<a class=\"text-link\" href=\"" + html_url + "\" target=\"_blank\">" + (0, _timeAgo.timeAgo)(Date.now(), new Date(created_at)) + "</a>\n          </span>\n          <div class=\"comment-actions\">\n            " + (association ? "<span class=\"author-association-badge\">" + association + "</span>" : '') + "\n            " + headerReactionsMenu + "\n          </div>\n        </header>\n        <div class=\"markdown-body markdown-body-scrollable\">\n          " + body + "\n        </div>\n        <div class=\"comment-footer\" reaction-count=\"" + reactionCount + "\" reaction-url=\"******\">\n          <form class=\"reaction-list BtnGroup\" action=\"javascript:\">\n            " + _github.reactionTypes.map(function (id) {
+    this.element.innerHTML = "\n      <a class=\"avatar\" href=\"" + user.html_url + "\" target=\"_blank\">\n        <img alt=\"@" + user.login + "\" height=\"44\" width=\"44\" src=\"" + avatar_url + "\">\n      </a>\n      <div class=\"comment\">\n        <header class=\"comment-header\">\n          <span class=\"comment-meta\">\n            <a class=\"text-link comment-author\" href=\"" + user.html_url + "\" target=\"_blank\"><strong>" + user.name + "</strong></a>\n            \u8BC4\u8BBA<a class=\"text-link\" href=\"" + html_url + "\" target=\"_blank\">" + (0, _timeAgo.timeAgo)(Date.now(), new Date(created_at)) + "</a>\n          </span>\n          <div class=\"comment-actions\">\n            " + (association ? "<span class=\"author-association-badge\">" + association + "</span>" : '') + "\n            " + headerReactionsMenu + "\n          </div>\n        </header>\n        <div class=\"markdown-body markdown-body-scrollable\">\n          " + body + "\n        </div>\n        <div class=\"comment-footer\" reaction-count=\"" + reactionCount + "\" reaction-url=\"https://gitee.com/" + _pageAttributes.pageAttributes.owner + "/" + _pageAttributes.pageAttributes.repo + "/reactions\">\n          <form class=\"reaction-list BtnGroup\" action=\"javascript:\">\n            " + _github.reactionTypes.map(function (id) {
       return (0, _reactions.getReactionHtml)(id, !currentUser || locked, reactions[id]);
     }).join('') + "\n          </form>\n          " + footerReactionsMenu + "\n        </div>\n      </div>";
     var markdownBody = this.element.querySelector('.markdown-body');
