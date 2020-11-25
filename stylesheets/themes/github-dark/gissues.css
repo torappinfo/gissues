@@ -2228,7 +2228,7 @@ input::-webkit-inner-spin-button {
 }
 .timeline-comment .avatar > img {
   border-radius: 6px;
-  border: 1px #343434 solid;
+  /* border: $border; */
 }
 .timeline-comment .comment {
   position: relative;
