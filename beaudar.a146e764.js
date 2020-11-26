@@ -254,7 +254,7 @@ var NewErrorElement = function () {
       reloadButtonStr = '<button id="reload-button" type="button" class="btn btn-primary" >刷新</button>';
     }
 
-    this.element.querySelector('#beaudarMsg').insertAdjacentHTML('beforeend', "\n    <h3>" + header + "</h3>\n    " + body + "\n    <p> \u83B7\u53D6\u5E2E\u52A9\uFF1A<a href=\"https://gitee.com/gissues\" target=\"_blank\">\u5173\u4E8E Gissues</a></p>\n    " + reloadButtonStr);
+    this.element.querySelector('#beaudarMsg').insertAdjacentHTML('beforeend', "\n    <h3>" + header + "</h3>\n    " + body + "\n    <p> \u6216\u8005\u5C1D\u8BD5\u91CD\u65B0\u767B\u5F55\uFF1A<a href=\"https://oauth.applinzi.com/Gissues/authorize.php\" target=\"_blank\">\u767B\u5F55</a></p>\n    " + reloadButtonStr);
 
     if (this.isTimelineNull) {
       document.body.appendChild(this.element);
